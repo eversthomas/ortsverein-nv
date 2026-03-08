@@ -1,0 +1,16 @@
+/*
+Theme Name: Ortsverein NV
+Theme URI: https://example.com
+Author: AWO Ortsverein Neukirchen-Vluyn
+Author URI: https://example.com
+Description: Klassisches WordPress-Theme für den AWO Ortsverein Neukirchen-Vluyn. Barrierefrei, SEO-sauber, redaktionell geführt. Kein Gutenberg, Classic Editor.
+Version: 1.0.0
+Requires at least: 5.9
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: ortsverein-nv
+*/
+
+/* Haupt-Styles werden in assets/css/theme.css geladen (inc/enqueue.php). */

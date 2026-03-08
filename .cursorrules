@@ -1,0 +1,395 @@
+# Cursor Rules – WordPress Theme "ortsverein-nv"
+
+## Projektkontext
+Dieses Projekt entwickelt ein klassisches, maßgeschneidertes WordPress-Theme für einen AWO Ortsverein.
+Ausgangspunkt ist eine vorhandene statische HTML-Vorlage, die als visuelle und strukturelle Referenz dient.
+Das Theme soll redaktionell sehr einfach pflegbar sein und sich an ältere Redakteure richten.
+Design, Layout, Komponentenlogik und Struktur werden vollständig im Theme kontrolliert.
+Redakteure dürfen Inhalte ändern, aber keine gestalterischen Entscheidungen treffen.
+
+---
+
+## Zentrale Architekturprinzipien
+
+### 1. Theme-Zweck
+Das Theme ist ausschließlich für die öffentliche Website zuständig:
+- Startseite
+- statische Unterseiten
+- Ausgabe öffentlicher Inhalte
+- saubere semantische Struktur
+- SEO-Basis
+- Barrierefreiheit
+- performante Frontend-Ausgabe
+
+Keine Plugin- oder Applikationslogik in das Theme mischen, sofern sie nicht direkt für die Darstellung nötig ist.
+
+### 2. Kein Baukastensystem
+Dieses Projekt verwendet:
+- keinen Gutenberg-Editor
+- keinen Site Editor
+- keinen Page Builder
+- keine frei zusammensetzbaren Inhaltsblöcke
+- keine Layout-Builder-Logik
+
+Stattdessen:
+- Classic Editor
+- klar definierte Templates
+- feste Template Parts
+- gezielte, schlanke Meta-Felder nur wenn wirklich nötig
+- keine unnötige Flexibilisierung des Backends
+
+### 3. Designhoheit liegt im Theme
+Das Design ist nicht redaktionell konfigurierbar.
+Keine Optionen für Redakteure zur Veränderung von:
+- Farben
+- Abständen
+- Layout
+- Komponentenreihenfolgen
+- Template-Struktur
+- responsivem Verhalten
+- Navigationstypen
+
+Inhalte dürfen geändert werden, Gestaltung nicht.
+
+### 4. ACF vermeiden
+Es soll kein ACF eingesetzt werden.
+Wenn Zusatzfelder nötig sind:
+- native WordPress-Meta-Felder verwenden
+- eigene schlanke Meta-Boxen implementieren
+- Sanitizing, Escaping und Nonces konsequent sauber umsetzen
+- nur wirklich notwendige Felder ergänzen
+
+---
+
+## Entwicklungsstil
+
+### 5. WordPress Best Practices
+Immer WordPress-konform entwickeln:
+- Template Hierarchy korrekt nutzen
+- `get_header()`, `get_footer()`, `get_template_part()` sauber einsetzen
+- Theme-Funktionen modular organisieren
+- `functions.php` schlank halten und in `inc/` auslagern
+- WordPress APIs bevorzugen statt Workarounds
+- keine globalen Nebenwirkungen ohne Not
+- keine Logik duplizieren
+- keine Hardcodierung, wenn WordPress bereits eine API dafür bereitstellt
+
+### 6. Modularität
+Code immer modular und wartbar strukturieren.
+
+Bevorzugte Struktur:
+- `functions.php` nur als Loader
+- `inc/theme-setup.php`
+- `inc/enqueue.php`
+- `inc/cleanup.php`
+- `inc/admin.php`
+- `inc/meta-boxes.php`
+- `inc/template-functions.php`
+- `template-parts/...`
+- `assets/css/...`
+- `assets/js/...`
+
+Jede Datei soll eine klar erkennbare Verantwortung haben.
+
+### 7. Saubere Präfixe
+Eigene Funktionen, Konstanten, Klassen, Handles und Metakeys immer mit konsistentem Präfix versehen.
+
+Bevorzugtes Präfix:
+- `ortsverein_nv_`
+
+Beispiele:
+- `ortsnverein_nv_setup_theme()` ist falsch geschrieben und zu vermeiden
+- `ortsverein_nv_setup_theme()` ist korrekt
+- `ortsverein_nv_register_meta_boxes()`
+- `ortsnverein` niemals versehentlich verwenden
+- Metakeys wie `_ortsverein_nv_hero_title`
+
+### 8. Keine unnötigen Abhängigkeiten
+So wenige externe Abhängigkeiten wie möglich.
+Keine Libraries einführen, wenn WordPress oder simples Vanilla JS/CSS ausreicht.
+Kein Framework-Zwang.
+Kein unnötiger Build-Overhead, sofern nicht klarer Mehrwert entsteht.
+
+---
+
+## Backend-Strategie
+
+### 9. Classic Editor fest einplanen
+Das Theme soll für Classic Editor optimiert werden.
+Bei Backend-Anpassungen immer davon ausgehen:
+- Redakteure arbeiten nicht mit Blöcken
+- Inhalte werden klassisch bearbeitet
+- Bedienung soll reduziert und selbsterklärend sein
+
+### 10. Backend entschlacken
+WordPress im Sinne einfacher Redaktion reduzieren, wo sinnvoll:
+- Gutenberg deaktivieren
+- Block-Widgets deaktivieren
+- Kommentare deaktivieren, wenn nicht benötigt
+- unnötige Dashboard-Widgets entfernen
+- Theme-/Plugin-Editor deaktivieren
+- unnötige Menüpunkte für Redakteure ausblenden
+- Customizer einschränken oder deaktivieren, wenn keine legitime Nutzung besteht
+- keine überflüssigen Freiheiten im Backend anbieten
+
+Aber:
+- nie blind Kernfunktionen entfernen
+- nie APIs deaktivieren, die später gebraucht werden könnten, ohne klare Begründung
+- Reduktion soll gezielt, nicht destruktiv sein
+
+### 11. Redaktionsfreundlichkeit
+Backend-Oberflächen für Redakteure müssen:
+- ruhig
+- verständlich
+- reduziert
+- fehlertolerant
+sein.
+
+Bevorzugen:
+- klare Beschriftungen
+- wenige Optionen
+- kurze Hilfetexte
+- feste Bearbeitungsabläufe
+- logisch gruppierte Felder
+
+Vermeiden:
+- technische Fachsprache im Backend
+- überladene Einstellungsseiten
+- Optionen ohne klaren redaktionellen Mehrwert
+
+---
+
+## Frontend-Qualität
+
+### 12. Semantik zuerst
+HTML immer semantisch korrekt schreiben:
+- `header`
+- `nav`
+- `main`
+- `section`
+- `article`
+- `aside`
+- `footer`
+- sinnvolle Listen
+- korrekte Buttons vs. Links
+- sinnvolle Formularstruktur
+
+`div` nur verwenden, wenn kein semantisch besseres Element passt.
+
+### 13. Barrierefreiheit ist Pflicht
+Accessibility ist kein Zusatz, sondern Kernanforderung.
+
+Immer beachten:
+- saubere Überschriftenhierarchie
+- sichtbare Fokuszustände
+- Tastaturbedienbarkeit
+- verständliche Linktexte
+- ausreichende Kontraste
+- Formulare mit Labels
+- sinnvolle ARIA-Attribute nur dort, wo wirklich nötig
+- dekorative Elemente korrekt als dekorativ behandeln
+- Bilder mit sinnvollen Alt-Text-Konzepten
+- Skip-Link unterstützen
+- Navigation auch ohne Maus nutzbar machen
+- keine Interaktion nur per Hover
+- keine Informationen ausschließlich über Farbe vermitteln
+
+Bei interaktiven Komponenten:
+- Tastatursteuerung mitdenken
+- Screenreader-Verhalten mitdenken
+- Fallbacks mitdenken
+
+### 14. Responsive und robust
+Layouts müssen sauber responsiv sein, ohne editorische Sonderfälle zu erzeugen.
+Mobile First oder zumindest mobile sauber mitdenken.
+Keine fragilen Pixel-Layouts.
+Keine Layouts, die nur mit exakt bestimmten Inhaltslängen funktionieren.
+
+### 15. Progressive Enhancement
+Frontend soll auch ohne übermäßiges JavaScript funktionsfähig bleiben, soweit möglich.
+JavaScript ergänzt Verhalten, ersetzt aber nicht unnötig die Basisfunktion.
+Keine kritischen Inhalte ausschließlich per JS rendern, wenn es serverseitig stabil lösbar ist.
+
+---
+
+## SEO-Strategie
+
+### 16. SEO von Beginn an technisch mitdenken
+SEO soll direkt in Theme-Struktur und Markup einfließen.
+Nicht auf Plugin-Magie verlassen.
+
+Wichtige Anforderungen:
+- pro Seite sauberer `title`
+- sinnvolle Meta Description Strategie
+- genau eine H1 pro sinnvoller Hauptseite
+- saubere Heading-Hierarchie
+- semantische Inhaltsstruktur
+- interne Verlinkung bewusst mitdenken
+- saubere Bildauszeichnung
+- performantes Frontend
+- keine inhaltsleeren Template-Ausgaben
+- keine unnötigen Duplicate-Content-Strukturen
+- keine aufgeblähten DOM-Strukturen ohne Nutzen
+
+### 17. SEO ohne Spam
+Keine überoptimierten Muster erzeugen.
+Keine Keyword-Stuffing-Mechaniken.
+Kein maschinelles Einfügen von SEO-Textblöcken ohne redaktionellen Mehrwert.
+SEO bedeutet hier:
+- klare Informationsarchitektur
+- gute technische Basis
+- semantische Stärke
+- lesbare Inhalte
+- performante Auslieferung
+- stabile interne Verlinkung
+
+### 18. Strukturierte Daten nur gezielt
+Schema.org oder JSON-LD nur dann ergänzen, wenn fachlich passend und sauber ableitbar.
+Nicht blind „mehr Markup“ erzeugen.
+Jede strukturierte Auszeichnung muss inhaltlich korrekt und nachhaltig wartbar sein.
+
+---
+
+## Sicherheit und Codequalität
+
+### 19. Escaping und Sanitizing konsequent
+Immer kontextgerecht escapen:
+- `esc_html()`
+- `esc_attr()`
+- `esc_url()`
+- `wp_kses_post()`
+usw.
+
+Eingaben immer sanitizen:
+- `sanitize_text_field()`
+- `sanitize_textarea_field()`
+- `absint()`
+- `sanitize_email()`
+- weitere passende WordPress-Funktionen
+
+Meta-Boxen und Formverarbeitung immer mit:
+- Nonce-Prüfung
+- Capability-Prüfung
+- Autosave-/Revision-Prüfung
+
+### 20. Keine unsauberen Quick Fixes
+Nicht mit provisorischen Hacks arbeiten, wenn eine saubere WordPress-Lösung möglich ist.
+Lieber eine kleine, robuste Lösung als eine scheinbar clevere, aber fragile Abkürzung.
+
+### 21. Defensive Entwicklung
+Immer davon ausgehen, dass Inhalte unvollständig sein können:
+- fehlende Bilder
+- leere Felder
+- kein Auszug
+- kurze oder lange Überschriften
+- leere Listen
+- nicht gesetzte Meta-Werte
+
+Templates müssen robust degradieren und sauber fallbacken.
+
+---
+
+## CSS- und JS-Leitlinien
+
+### 22. CSS-Prinzipien
+CSS soll:
+- klar strukturiert
+- komponentenorientiert
+- wartbar
+- konfliktarm
+sein.
+
+Bevorzugen:
+- Theme-Designsystem mit Variablen
+- konsistente Abstände
+- sinnvolle Komponentenklassen
+- keine unnötig hohe Spezifität
+- keine ID-lastige Styling-Architektur außer wo fachlich sinnvoll
+- keine wilden Überschreibungen
+
+Vermeiden:
+- `!important` ohne zwingenden Grund
+- Copy-Paste-Styling
+- unstrukturierte Mega-Dateien
+- eng an Editor-HTML gekoppelte Styles ohne Not
+
+### 23. JavaScript-Prinzipien
+JavaScript nur dort einsetzen, wo echter Mehrwert entsteht.
+Bevorzugt:
+- Vanilla JS
+- kleine, klar abgegrenzte Module
+- eventbasiert
+- defensiv programmiert
+
+Vermeiden:
+- Abhängigkeit von jQuery ohne zwingenden Grund
+- globale Variablen
+- schwer testbare Inline-Skripte
+- überkomplexe Frontend-Architekturen für einfache Interaktionen
+
+---
+
+## Arbeiten mit der vorhandenen HTML-Vorlage
+
+### 24. Vorlage als Referenz, nicht blind 1:1
+Die vorhandene HTML-Datei ist gestalterische und strukturelle Referenz.
+Sie soll sauber in WordPress überführt werden, aber nicht unreflektiert 1:1 „eingegossen“ werden.
+
+Dabei immer unterscheiden:
+- Was ist Layout?
+- Was ist wiederverwendbare Komponente?
+- Was ist redaktioneller Inhalt?
+- Was gehört auf die Startseite?
+- Was wird eigene Unterseite?
+- Was ist nur Demo- oder Platzhalterinhalt?
+
+### 25. Öffentliche Seitenarchitektur mitdenken
+Die frühere Onepager-Logik der HTML-Vorlage soll sinnvoll in WordPress-Seitenarchitektur übersetzt werden.
+Startseite und Unterseiten dürfen getrennt werden, wenn das redaktionell sinnvoller ist.
+Keine rein statische Anchor-Logik erzwingen, wenn echte Seitenstruktur sinnvoller ist.
+
+---
+
+## Erwartete Arbeitsweise von Cursor
+
+### 26. Bei Änderungen immer strukturell denken
+Nicht nur die konkrete Aufgabe lösen, sondern prüfen:
+- betrifft das mehrere Templates?
+- gehört das in ein Template Part?
+- braucht es eine Helper-Funktion?
+- muss Escaping ergänzt werden?
+- hat es Accessibility-Folgen?
+- hat es SEO-Folgen?
+- ist die Lösung für Redakteure verständlich?
+
+### 27. Bestehenden Stil respektieren
+Vorhandene Benennungen, Struktur und Architektur respektieren und konsistent erweitern.
+Nicht bei jeder Änderung ein neues Muster einführen.
+Lieber vorhandene Konventionen stärken als neue Stilbrüche erzeugen.
+
+### 28. Ausgabequalität vor Schnelllösung
+Immer robuste, produktionsfähige Lösungen bevorzugen.
+Keine Demo-Implementierungen, wenn produktionsnahe Umsetzung erwartet ist.
+
+### 29. Kommentare sparsam, aber sinnvoll
+Keine überkommentierte Codebasis.
+Kommentare nur dort, wo Entscheidungen, Fallstricke oder Architektur erklärt werden müssen.
+Keine offensichtlichen Zeilen kommentieren.
+
+### 30. Immer vollständige betroffene Dateien liefern
+Wenn Code ausgegeben wird, immer vollständige betroffene Dateien liefern, nicht nur Snippets, sofern eine Datei geändert werden soll.
+Keine verkürzten Teilantworten, wenn die Datei als Ganzes relevant ist.
+
+---
+
+## Zielbild
+Das Ergebnis soll ein klassisches, schlankes, hochwertiges WordPress-Theme sein:
+- ohne Gutenberg
+- ohne ACF
+- ohne Pagebuilder
+- mit starker Designkontrolle
+- mit einfacher Redaktion
+- mit sauberer SEO-Basis
+- mit konsequenter Barrierefreiheit
+- mit modularer und wartbarer Architektur
+- mit klarer Trennung zwischen öffentlichem Theme und später möglicher Plugin-/Backend-Logik
