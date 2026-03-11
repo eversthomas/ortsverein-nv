@@ -251,10 +251,6 @@ li { margin-bottom: 0.4em; }
 /* ===== HERO ===== */
 #hero {
   background-color: var(--grau-hell);
-  background-image: url('../images/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   padding: calc(var(--abstand-xl) + 12px) 0 var(--abstand-xl);
   position: relative;
   overflow: hidden;
@@ -977,4 +973,3 @@ section.bg-rot-hell { background: var(--rot-hell); }
     transform: none;
   }
 }
-</style>

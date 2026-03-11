@@ -122,5 +122,8 @@ function ortsverein_nv_dequeue_frontend_assets() {
 	wp_dequeue_style( 'wc-blocks-style' );
 	wp_dequeue_style( 'dashicons' );
 	wp_dequeue_style( 'wp-img-auto-sizes-contain' );
+
+	// Embed-Script wird für oEmbed nicht mehr benötigt (Embeds sind deaktiviert).
+	wp_deregister_script( 'wp-embed' );
 }
 add_action( 'wp_enqueue_scripts', 'ortsverein_nv_dequeue_frontend_assets', 100 );
