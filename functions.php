@@ -32,6 +32,8 @@ require_once $ortsverein_nv_inc . 'cleanup.php';
 require_once $ortsverein_nv_inc . 'head-cleanup.php';
 // Accessibility (ARIA, aria-current).
 require_once $ortsverein_nv_inc . 'accessibility.php';
+// KI-/LLM-Hinweisedatei (llms.txt).
+require_once $ortsverein_nv_inc . 'llms.php';
 // Sitemap (XML).
 require_once $ortsverein_nv_inc . 'sitemap.php';
 // Schema / strukturierte Daten.

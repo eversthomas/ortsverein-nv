@@ -31,7 +31,8 @@ ortsverein-nv/
 │   ├── head-cleanup.php   # RSD, WLW, Generator, Shortlink, REST-Link
 │   ├── accessibility.php  # aria-current für Menü, Body-Class-Hook
 │   ├── schema.php         # Strukturierte Daten (Schema.org/JSON-LD)
-│   └── sitemap.php        # XML-Sitemap /sitemap.xml
+│   ├── sitemap.php        # XML-Sitemap /sitemap.xml
+│   └── llms.php           # llms.txt – KI-/LLM-Hinweise
 ├── template-parts/
 │   ├── hero.php           # Hero (nur Startseite)
 │   ├── hero-subpage.php   # Reduzierter Hero (Breadcrumb + H1) für Unterseiten
@@ -197,15 +198,19 @@ Details zu Ist-Zustand, Zielarchitektur und Begründungen stehen ergänzend in `
     - Theme-JS (`ortsverein-nv-theme`) wird mit `defer` geladen, um den initialen Renderpfad nicht zu blockieren.
   - Test-Idee: Lighthouse/Audit auf Startseite und Unterseiten ausführen und insbesondere LCP/TBT prüfen; sicherstellen, dass Interaktivität (Burger, Kalender-Interaktion) weiterhin funktioniert.
 
-- [ ] **C2: Accessibility-Feinschliff**
+- [x] **C2: Accessibility-Feinschliff**
   - Ziel: Barrierefreiheit von „gut“ auf „sehr gut“ bringen.
-  - Mögliche Maßnahmen: Fokus-/Kontrast-Optimierung, Keyboard-Navigation, Screenreader-Texte, ARIA-Feinschliff.
-  - Test-Idee: Tastatur-Only-Nutzung, Screenreader-Kurztesten (z. B. VoiceOver/NVDA) und AXE/WCAG-Checks.
+  - Umsetzung:
+    - Kalender-Grid von unnötigen ARIA-Grid-Rollen befreit (keine fehlerhafte `grid`/`gridcell`-Hierarchie mehr, dafür klare Labels und Tastaturbedienung über `tabindex` + Enter/Space).
+    - Mobile Navigation verbessert: Beim Öffnen wandert der Fokus auf den ersten Link im Menü, beim Schließen zurück auf den Burger; Escape schließt das Menü aus der Tastatur-Nutzung heraus.
+  - Test-Idee: Lighthouse-/AXE-Check auf Start- und Kalenderseite (keine ARIA-Hierarchie-Warnung mehr), Tastatur-Only-Nutzung der Mobile-Navigation (Tab und Escape) und Kalender-Interaktion (Tab auf Tage mit Termin, Enter/Space zum Hervorheben).
 
-- [ ] **C3: KI-/LLM-Optimierungen**
+- [x] **C3: KI-/LLM-Optimierungen**
   - Ziel: Theme-Inhalte für KI-/LLM-Modelle noch besser nutzbar machen – klar getrennt von klassischem SEO.
-  - Mögliche Maßnahmen: zusätzliche strukturierte Entitäten, optionale `llms.txt`-Datei, konsistente Organisations-/Angebotsbeschreibungen.
-  - Test-Idee: Quelltext/Head auf zusätzliche KI-spezifische Strukturen prüfen, sicherstellen, dass klassisches SEO unverändert sauber bleibt.
+  - Umsetzung:
+    - `inc/llms.php`: llms.txt unter `/llms.txt` bereitgestellt mit kompakten, maschinenlesbaren Angaben zu Site-URL, Vereinsname, Ort, Kurzbeschreibung, zentralen Inhaltsseiten und ICS-Feed.
+    - llms.txt ist optional und wird über eigene Rewrite-/Query-Var-Logik ausgeliefert; ein Hook `ortsverein_nv_llms_txt` erlaubt Erweiterungen durch Child-Theme/Plugins.
+  - Test-Idee: `/llms.txt` im Browser aufrufen, prüfen, ob URL, Name, zentrale Seiten (sofern zugewiesen) und ICS-URL korrekt gelistet sind.
 
 ---
 
