@@ -10,10 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$ortsverein_nv_mitglied_page = get_page_by_path( 'mitgliedschaft' );
-$ortsverein_nv_mitglied_url  = $ortsverein_nv_mitglied_page ? get_permalink( $ortsverein_nv_mitglied_page ) : '';
-$ortsverein_nv_kontakt_page  = get_page_by_path( 'kontakt' );
-$ortsverein_nv_kontakt_url   = $ortsverein_nv_kontakt_page ? get_permalink( $ortsverein_nv_kontakt_page ) : '';
+$ortsverein_nv_mitglied_url = ortsverein_nv_get_page_url_from_option( 'page_membership', 'mitgliedschaft' );
+$ortsverein_nv_kontakt_url  = ortsverein_nv_get_page_url_from_option( 'page_contact', 'kontakt' );
 ?>
 
 <section id="mitgliedschaft" class="section-padding" aria-labelledby="mitglied-teaser-h2">

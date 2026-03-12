@@ -226,19 +226,47 @@ function ortsverein_nv_get_events_for_month( $year, $month ) {
 	return $out;
 }
 
-/** Deutsche Monatsnamen (voll). */
-$GLOBALS['ortsverein_nv_monate'] = array(
-	1 => __( 'Januar', 'ortsverein-nv' ), 2 => __( 'Februar', 'ortsverein-nv' ), 3 => __( 'März', 'ortsverein-nv' ),
-	4 => __( 'April', 'ortsverein-nv' ), 5 => __( 'Mai', 'ortsverein-nv' ), 6 => __( 'Juni', 'ortsverein-nv' ),
-	7 => __( 'Juli', 'ortsverein-nv' ), 8 => __( 'August', 'ortsverein-nv' ), 9 => __( 'September', 'ortsverein-nv' ),
-	10 => __( 'Oktober', 'ortsverein-nv' ), 11 => __( 'November', 'ortsverein-nv' ), 12 => __( 'Dezember', 'ortsverein-nv' ),
-);
+/**
+ * Deutsche Monatsnamen (voll).
+ *
+ * Wird als Funktion bereitgestellt, damit Übersetzungen erst zur Laufzeit
+ * geladen werden und nicht beim Einbinden der Datei (vermeidet JIT-Warnungen).
+ *
+ * @return array
+ */
+function ortsverein_nv_get_month_names() {
+	return array(
+		1  => __( 'Januar', 'ortsverein-nv' ),
+		2  => __( 'Februar', 'ortsverein-nv' ),
+		3  => __( 'März', 'ortsverein-nv' ),
+		4  => __( 'April', 'ortsverein-nv' ),
+		5  => __( 'Mai', 'ortsverein-nv' ),
+		6  => __( 'Juni', 'ortsverein-nv' ),
+		7  => __( 'Juli', 'ortsverein-nv' ),
+		8  => __( 'August', 'ortsverein-nv' ),
+		9  => __( 'September', 'ortsverein-nv' ),
+		10 => __( 'Oktober', 'ortsverein-nv' ),
+		11 => __( 'November', 'ortsverein-nv' ),
+		12 => __( 'Dezember', 'ortsverein-nv' ),
+	);
+}
 
-/** Deutsche Wochentage (voll). */
-$GLOBALS['ortsverein_nv_wochentage'] = array(
-	1 => __( 'Montag', 'ortsverein-nv' ), 2 => __( 'Dienstag', 'ortsverein-nv' ), 3 => __( 'Mittwoch', 'ortsverein-nv' ),
-	4 => __( 'Donnerstag', 'ortsverein-nv' ), 5 => __( 'Freitag', 'ortsverein-nv' ), 6 => __( 'Samstag', 'ortsverein-nv' ), 7 => __( 'Sonntag', 'ortsverein-nv' ),
-);
+/**
+ * Deutsche Wochentage (voll).
+ *
+ * @return array
+ */
+function ortsverein_nv_get_weekday_names() {
+	return array(
+		1 => __( 'Montag', 'ortsverein-nv' ),
+		2 => __( 'Dienstag', 'ortsverein-nv' ),
+		3 => __( 'Mittwoch', 'ortsverein-nv' ),
+		4 => __( 'Donnerstag', 'ortsverein-nv' ),
+		5 => __( 'Freitag', 'ortsverein-nv' ),
+		6 => __( 'Samstag', 'ortsverein-nv' ),
+		7 => __( 'Sonntag', 'ortsverein-nv' ),
+	);
+}
 
 /**
  * Monat kurz (z. B. JAN) für Termin-Datum.
@@ -248,7 +276,8 @@ $GLOBALS['ortsverein_nv_wochentage'] = array(
  */
 function ortsverein_nv_ics_month_short( DateTime $dt ) {
 	$m = (int) $dt->format( 'n' );
-	$full = isset( $GLOBALS['ortsverein_nv_monate'][ $m ] ) ? $GLOBALS['ortsverein_nv_monate'][ $m ] : $dt->format( 'M' );
+	$months = ortsverein_nv_get_month_names();
+	$full   = isset( $months[ $m ] ) ? $months[ $m ] : $dt->format( 'M' );
 	return strtoupper( mb_substr( $full, 0, 3 ) );
 }
 
@@ -260,5 +289,6 @@ function ortsverein_nv_ics_month_short( DateTime $dt ) {
  */
 function ortsverein_nv_ics_weekday( DateTime $dt ) {
 	$w = (int) $dt->format( 'N' ); // 1=Mo .. 7=So
-	return isset( $GLOBALS['ortsverein_nv_wochentage'][ $w ] ) ? $GLOBALS['ortsverein_nv_wochentage'][ $w ] : $dt->format( 'l' );
+	$days = ortsverein_nv_get_weekday_names();
+	return isset( $days[ $w ] ) ? $days[ $w ] : $dt->format( 'l' );
 }

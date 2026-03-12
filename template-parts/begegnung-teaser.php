@@ -10,8 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$ortsverein_nv_begegnung_page = get_page_by_path( 'begegnung' );
-$ortsverein_nv_begegnung_url  = $ortsverein_nv_begegnung_page ? get_permalink( $ortsverein_nv_begegnung_page ) : '';
+$ortsverein_nv_begegnung_url = ortsverein_nv_get_page_url_from_option( 'page_begegnung', 'begegnung' );
 ?>
 
 <section id="begegnung" class="section-padding bg-rot-hell" aria-labelledby="begegnung-teaser-h2">

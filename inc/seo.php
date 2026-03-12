@@ -130,13 +130,40 @@ function ortsverein_nv_output_social_meta() {
 		return;
 	}
 
+	global $wp;
+
 	$title       = wp_get_document_title();
 	$description = apply_filters( 'ortsverein_nv_meta_description', '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-	$site_name   = get_bloginfo( 'name', 'display' );
 
-	// Aktuelle URL ermitteln.
-	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
-	$url         = esc_url( home_url( $request_uri ) );
+	// Site-Name bevorzugt aus Theme-Options, sonst Blogname.
+	if ( function_exists( 'ortsverein_nv_get_option' ) ) {
+		$site_name = ortsverein_nv_get_option( 'org_name', get_bloginfo( 'name', 'display' ) );
+	} else {
+		$site_name = get_bloginfo( 'name', 'display' );
+	}
+
+	// Aktuelle URL ermitteln (analog Canonical).
+	if ( is_singular() ) {
+		$url = get_permalink();
+	} elseif ( is_search() ) {
+		$url = get_search_link();
+	} elseif ( is_home() && ! is_front_page() ) {
+		$page_for_posts = (int) get_option( 'page_for_posts' );
+		$url            = $page_for_posts ? get_permalink( $page_for_posts ) : home_url( '/' );
+	} elseif ( is_front_page() ) {
+		$url = home_url( '/' );
+	} elseif ( is_category() || is_tag() || is_tax() ) {
+		$term = get_queried_object();
+		$url  = ( $term && ! is_wp_error( $term ) ) ? get_term_link( $term ) : home_url( '/' );
+	} elseif ( is_post_type_archive() || is_author() || is_date() || is_archive() ) {
+		if ( isset( $wp->request ) ) {
+			$url = home_url( '/' . ltrim( $wp->request, '/' ) . '/' );
+		} else {
+			$url = home_url( '/' );
+		}
+	} else {
+		$url = home_url( '/' );
+	}
 
 	// Bild: Priorität Feature Image > Hero-Bild > Custom Logo.
 	$image = '';
@@ -157,7 +184,15 @@ function ortsverein_nv_output_social_meta() {
 	}
 
 	// Open Graph.
-	echo '<meta property="og:type" content="' . esc_attr( is_singular() ? 'article' : 'website' ) . '">' . "\n";
+	if ( is_singular( 'post' ) ) {
+		$og_type = 'article';
+	} elseif ( is_front_page() || is_home() || is_page() ) {
+		$og_type = 'website';
+	} else {
+		$og_type = 'website';
+	}
+
+	echo '<meta property="og:type" content="' . esc_attr( $og_type ) . '">' . "\n";
 	echo '<meta property="og:title" content="' . esc_attr( $title ) . '">' . "\n";
 	if ( $description ) {
 		echo '<meta property="og:description" content="' . esc_attr( $description ) . '">' . "\n";
@@ -183,120 +218,8 @@ function ortsverein_nv_output_social_meta() {
 add_action( 'wp_head', 'ortsverein_nv_output_social_meta', 3 );
 
 /**
- * Strukturierte Daten (Schema.org/JSON-LD) für Organisation, Website und Events.
- * Hilft Suchmaschinen und KI-Diensten, Inhalte besser zu verstehen.
- * Gibt nichts aus, wenn ein gängiges SEO-Plugin aktiv ist.
- */
-function ortsverein_nv_output_schema_jsonld() {
-	if ( is_admin() ) {
-		return;
-	}
-
-	if ( defined( 'WPSEO_VERSION' ) || class_exists( 'RankMath' ) ) {
-		return;
-	}
-
-	$graph = array();
-
-	$home_url = home_url( '/' );
-
-	// Organisation (Ortsverein).
-	$org = array(
-		'@type'           => 'NGO',
-		'@id'             => $home_url . '#organisation',
-		'name'            => 'AWO Ortsverein Neukirchen-Vluyn',
-		'url'             => $home_url,
-		'address'         => array(
-			'@type'           => 'PostalAddress',
-			'streetAddress'   => 'Max-von-Schenkendorf-Straße 9',
-			'postalCode'      => '47506',
-			'addressLocality' => 'Neukirchen-Vluyn',
-			'addressCountry'  => 'DE',
-		),
-		'areaServed'      => array(
-			'@type' => 'City',
-			'name'  => 'Neukirchen-Vluyn',
-		),
-		'sameAs'          => array(
-			'https://www.awo-kv-wesel.de/ueber-die-awo/awo-vor-ort/ortsvereine-und-awo-treffs/ortsverein-neukirchen-vluyn/',
-		),
-	);
-
-	// Website.
-	$website = array(
-		'@type'           => 'WebSite',
-		'@id'             => $home_url . '#website',
-		'url'             => $home_url,
-		'name'            => get_bloginfo( 'name', 'display' ),
-		'description'     => get_bloginfo( 'description', 'display' ),
-		'publisher'       => array( '@id' => $home_url . '#organisation' ),
-		'potentialAction' => array(
-			'@type'       => 'SearchAction',
-			'target'      => $home_url . '?s={search_term_string}',
-			'query-input' => 'required name=search_term_string',
-		),
-	);
-
-	$graph[] = $org;
-	$graph[] = $website;
-
-	// Events aus ICS nur auf Startseite und Kalenderseite ausgeben (begrenzt auf einige kommende Termine).
-	if ( is_front_page() || is_page( 'kalender' ) ) {
-		if ( function_exists( 'ortsverein_nv_get_next_events' ) ) {
-			$events = ortsverein_nv_get_next_events( 6 );
-		} else {
-			$events = array();
-		}
-
-		foreach ( $events as $event ) {
-			if ( empty( $event['start'] ) || ! ( $event['start'] instanceof DateTime ) ) {
-				continue;
-			}
-			$start_iso = $event['start']->format( 'c' );
-			$end_iso   = ( ! empty( $event['end'] ) && $event['end'] instanceof DateTime ) ? $event['end']->format( 'c' ) : null;
-			$name      = isset( $event['title'] ) ? $event['title'] : __( 'Termin', 'ortsverein-nv' );
-			$location  = isset( $event['location'] ) && $event['location'] !== '' ? $event['location'] : 'Marie-Juchacz-Haus, Max-von-Schenkendorf-Straße 9, 47506 Neukirchen-Vluyn';
-
-			$graph[] = array(
-				'@type'     => 'Event',
-				'name'      => $name,
-				'startDate' => $start_iso,
-				'endDate'   => $end_iso,
-				'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-				'eventStatus'         => 'https://schema.org/EventScheduled',
-				'location'  => array(
-					'@type'   => 'Place',
-					'name'    => 'Marie-Juchacz-Haus',
-					'address' => array(
-						'@type'           => 'PostalAddress',
-						'streetAddress'   => 'Max-von-Schenkendorf-Straße 9',
-						'postalCode'      => '47506',
-						'addressLocality' => 'Neukirchen-Vluyn',
-						'addressCountry'  => 'DE',
-					),
-				),
-				'organizer' => array(
-					'@id' => $home_url . '#organisation',
-				),
-			);
-		}
-	}
-
-	if ( empty( $graph ) ) {
-		return;
-	}
-
-	$schema = array(
-		'@context' => 'https://schema.org',
-		'@graph'   => $graph,
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
-}
-add_action( 'wp_head', 'ortsverein_nv_output_schema_jsonld', 4 );
-
-/**
- * Canonical: WordPress liefert keinen Standard-Canonical im Head.
- * Theme gibt keinen aus, um Doppelung mit SEO-Plugins zu vermeiden.
- * Bei Bedarf kann hier ein Hook ergänzt werden, der nur ohne aktives SEO-Plugin feuert.
+ * Canonical & robots:
+ * - Canonical wird vom WordPress-Core über rel_canonical im Head ausgegeben.
+ * - robots-Meta wird vom WordPress-Core über wp_robots ausgegeben.
+ * Das Theme ergänzt hier bewusst keine eigenen Duplikate, um Mehrfachausgaben zu vermeiden.
  */

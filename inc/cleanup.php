@@ -83,17 +83,15 @@ function ortsverein_nv_disable_embeds() {
 add_action( 'init', 'ortsverein_nv_disable_embeds', 9999 );
 
 /**
- * REST-API nur für eingeloggte Administratoren zulassen.
- * Reduziert Angriffsfläche und verhindert unerwünschte Datenabfragen von außen.
+ * REST-API-Hardening:
+ * Ursprünglich wurde die REST-API pauschal für alle Nicht-Admins per rest_authentication_errors blockiert.
+ * Das ist für ein Theme zu hart und kollidiert mit WordPress- und Plugin-Ökosystemen.
+ *
+ * Entscheidung:
+ * - Gutenberg bleibt weiterhin deaktiviert (siehe ortsverein_nv_disable_gutenberg()).
+ * - Die REST-API wird nicht mehr global durch das Theme eingeschränkt.
+ * - Feiner granulierte REST-Härtung gehört eher in ein eigenes Sicherheits-Plugin.
  */
-function ortsverein_nv_restrict_rest_api( $result ) {
-	if ( ! is_wp_error( $result ) && ! current_user_can( 'manage_options' ) ) {
-		return new WP_Error( 'rest_not_logged_in', __( 'REST-API nur für Administratoren.', 'ortsverein-nv' ), array( 'status' => 401 ) );
-	}
-	return $result;
-}
-
-add_filter( 'rest_authentication_errors', 'ortsverein_nv_restrict_rest_api', 99 );
 
 /**
  * Global Styles an der Quelle abschalten (verhindert global-styles-inline-css im Frontend).

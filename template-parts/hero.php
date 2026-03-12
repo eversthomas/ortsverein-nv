@@ -49,9 +49,10 @@ if ( $ortsverein_nv_btn_primary_page_id > 0 ) {
 		$ortsverein_nv_termine_url = $ortsverein_nv_p;
 	}
 } else {
-	$ortsverein_nv_termine_page = get_page_by_path( 'termine' );
-	if ( $ortsverein_nv_termine_page ) {
-		$ortsverein_nv_termine_url = get_permalink( $ortsverein_nv_termine_page );
+	// Fallback: Kalenderseite aus Theme-Options, dann Slug "kalender".
+	$ortsverein_nv_termine_url = ortsverein_nv_get_page_url_from_option( 'page_calendar', 'kalender' );
+	if ( ! $ortsverein_nv_termine_url ) {
+		$ortsverein_nv_termine_url = $ortsverein_nv_home_url;
 	}
 }
 
@@ -62,9 +63,10 @@ if ( $ortsverein_nv_btn_secondary_page_id > 0 ) {
 		$ortsverein_nv_mitglied_url = $ortsverein_nv_p;
 	}
 } else {
-	$ortsverein_nv_mitglied_page = get_page_by_path( 'mitgliedschaft' );
-	if ( $ortsverein_nv_mitglied_page ) {
-		$ortsverein_nv_mitglied_url = get_permalink( $ortsverein_nv_mitglied_page );
+	// Fallback: Mitgliedschaftsseite aus Theme-Options, dann Slug "mitgliedschaft".
+	$ortsverein_nv_mitglied_url = ortsverein_nv_get_page_url_from_option( 'page_membership', 'mitgliedschaft' );
+	if ( ! $ortsverein_nv_mitglied_url ) {
+		$ortsverein_nv_mitglied_url = $ortsverein_nv_home_url;
 	}
 }
 ?>

@@ -66,3 +66,25 @@ function ortsverein_nv_enqueue_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'ortsverein_nv_enqueue_assets' );
+
+/**
+ * Script-Tag für das Theme-JS mit defer versehen, um die Render-Blockade zu minimieren.
+ *
+ * @param string $tag    Der ursprüngliche Script-Tag.
+ * @param string $handle Das Script-Handle.
+ * @param string $src    Die Script-URL.
+ * @return string
+ */
+function ortsverein_nv_defer_theme_script( $tag, $handle, $src ) {
+	if ( 'ortsverein-nv-theme' !== $handle ) {
+		return $tag;
+	}
+
+	// defer nur ergänzen, wenn nicht bereits gesetzt.
+	if ( false === strpos( $tag, ' defer' ) ) {
+		$tag = str_replace( '<script ', '<script defer ', $tag );
+	}
+
+	return $tag;
+}
+add_filter( 'script_loader_tag', 'ortsverein_nv_defer_theme_script', 10, 3 );

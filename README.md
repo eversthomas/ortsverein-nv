@@ -25,10 +25,13 @@ ortsverein-nv/
 │   ├── template-functions.php # Hilfsfunktionen (Home-URL, etc.)
 │   ├── ics.php            # ICS-Abruf, -Parser, Caching, Termin-Helfer
 │   ├── customizer.php     # Hero, Kalender-ICS-URL
+│   ├── theme-options.php  # Zentrale Theme-Options (Organisation, Seiten, SEO-Basis)
+│   ├── install.php        # Initial-Setup (Seiten, Menüs, Optionen) bei Theme-Aktivierung
 │   ├── cleanup.php        # Gutenberg aus, Emojis, Embeds, Frontend-Assets, Global Styles
 │   ├── head-cleanup.php   # RSD, WLW, Generator, Shortlink, REST-Link
 │   ├── accessibility.php  # aria-current für Menü, Body-Class-Hook
-│   └── seo.php            # Title-Filter, Meta-Description-Hook
+│   ├── schema.php         # Strukturierte Daten (Schema.org/JSON-LD)
+│   └── sitemap.php        # XML-Sitemap /sitemap.xml
 ├── template-parts/
 │   ├── hero.php           # Hero (nur Startseite)
 │   ├── hero-subpage.php   # Reduzierter Hero (Breadcrumb + H1) für Unterseiten
@@ -118,7 +121,95 @@ Drei Menü-Positionen (Theme-Setup): **Hauptmenü**, **Schnellzugriff** (Kontakt
 
 ---
 
-## Noch umzusetzen
+## Phasenplan (Optimierung & Entwicklung)
+
+Dieser Plan beschreibt die Weiterentwicklung des Themes in kleinen, testbaren Schritten.  
+Details zu Ist-Zustand, Zielarchitektur und Begründungen stehen ergänzend in `theme-audit-and-roadmap.md` im Projekt-Root.
+
+### Phase A – Vor Livegang wichtig (High Impact)
+
+- [x] **A1: Audit & Dokumentation**
+  - Ziel: Gemeinsames Bild von Ist-Zustand, Risiken und Zielarchitektur.
+  - Ergebnis: `theme-audit-and-roadmap.md` mit Analyse, Zielarchitektur und Roadmap.
+
+- [x] **A2: REST-API-Hardening entschärfen**
+  - Ziel: Gutenberg bleibt aus, REST-API wird nicht unnötig global blockiert.
+  - Umsetzung: Entfernen der pauschalen `rest_authentication_errors`-Sperre aus `inc/cleanup.php`.
+  - Test-Idee: REST-Endpunkte (`/wp-json/wp/v2/posts`) als Gast/Admin aufrufen, Classic Editor bleibt aktiv.
+
+- [x] **A3: Theme-Options-Seite (Basis)**
+  - Ziel: Zentrale, verständliche Verwaltungsoberfläche für Vereinsdaten und wichtige Theme-Einstellungen.
+  - Umsetzung: Eigene Theme-Options-Seite „Ortsverein NV“ unter „Design“ mit Bereichen:
+    - Verein & Organisation (Name, Kurzbeschreibung, Adresse)
+    - Kontakt & Online-Auftritt (E-Mail, Telefon, Website, Link zum Kreisverband)
+    - Zentrale Seiten (Kalender, Mitgliedschaft, Kontakt, Begegnungsstätte, Downloads, Intern)
+    - SEO-Basis (Fallback-Meta-Description)
+  - Test-Idee: Unter „Design → Ortsverein NV“ Werte setzen/ändern und später in strukturierten Daten / Links nutzen.
+
+- [x] **A4: Initial-Content / Install-Logik**
+  - Ziel: Nach Aktivierung direkt eine sinnvolle Grundstruktur ohne Dubletten erhalten.
+  - Umsetzung: `inc/install.php` mit Initial-Setup auf `after_switch_theme`:
+    - Legt fehlende Kernseiten an (Startseite, Kalender, Mitgliedschaft, Kontakt, Impressum, Datenschutz).
+    - Legt ggf. Menüs an (Hauptmenü, Schnellzugriff, Footer) und befüllt sie grundlegend.
+    - Setzt eine statische Startseite, falls noch keine gesetzt ist.
+    - Befüllt zentrale Theme-Options (z. B. Kalender-/Mitgliedschaftsseite), wenn dort noch nichts eingetragen ist.
+  - Test-Idee: Frische Testinstallation, Theme aktivieren, Seiten-/Menüstruktur und Startseite prüfen; erneute Aktivierung erzeugt keine Doppelstrukturen.
+
+- [x] **A5: SEO-Basis (Canonical + robots)**
+  - Ziel: Saubere SEO-Basis, ohne mit SEO-Plugins zu kollidieren.
+  - Umsetzung:
+    - `incs/seo.php` ergänzt um `ortsverein_nv_output_canonical()` und `ortsverein_nv_output_robots_meta()`:
+      - Gibt Canonical-Link und robots-Meta nur aus, wenn kein gängiges SEO-Plugin (Yoast/RankMath) aktiv ist.
+      - Canonical-URL ist filterbar über `ortsverein_nv_canonical_url`.
+      - robots-Content ist filterbar über `ortsverein_nv_robots`.
+  - Test-Idee: Seitenquelltext auf verschiedenen Seitentypen prüfen (mit/ohne SEO-Plugin), `<link rel="canonical">` und `<meta name="robots">` kontrollieren.
+
+### Phase B – Strukturelle Verbesserungen
+
+- [x] **B1: Schema-/LLM-Schicht trennen**
+  - Ziel: Klare Trennung von klassischem SEO, Schema.org und zukünftigen KI-/LLM-Erweiterungen.
+  - Umsetzung:
+    - JSON-LD-/Schema-Logik aus `inc/seo.php` nach `inc/schema.php` ausgelagert.
+    - `functions.php` lädt nun explizit `schema.php` (für strukturierte Daten) und `seo.php` (für Title/Meta/Social).
+  - Test-Idee: Rich-Results-Test und Quelltext prüfen, sicherstellen, dass nur ein JSON-LD-Block vom Theme kommt und SEO-Meta-Tags weiter korrekt sind.
+
+- [x] **B2: Slug-/Strukturrobustheit**
+  - Ziel: Slug- und Strukturänderungen im Backend sollen die Theme-Funktionen nicht brechen.
+  - Umsetzung:
+    - Zentrale Seiten (Kalender, Mitgliedschaft, Kontakt, Begegnung) werden in Hero-Buttons, Teasern und Angebotskacheln bevorzugt über Theme-Options (`page_*`) aufgelöst; Slugs dienen nur noch als defensiver Fallback.
+    - Schema-Events für die Kalenderseite nutzen die konfigurierte Kalenderseite (`page_calendar`) anstelle eines festen Slugs.
+  - Test-Idee: Slugs von Kernseiten ändern, Zuordnungen über „Design → Ortsverein NV → Zentrale Seiten“ anpassen und prüfen, ob alle Links (Hero, Teaser, Kacheln, Schema) weiterhin korrekt funktionieren.
+
+- [x] **B3: Sitemap**
+  - Ziel: Einfache, wartbare Sitemap ohne Abhängigkeit von Plugins, aber kompatibel mit ihnen.
+  - Umsetzung:
+    - XML-Sitemap unter `/sitemap.xml` über `inc/sitemap.php` (Rewrite + `template_redirect`).
+    - Enthält Startseite, alle veröffentlichten Seiten und (optional) Beiträge.
+    - Gibt nichts aus, wenn ein gängiges SEO-Plugin erkannt wird (Yoast/RankMath).
+  - Test-Idee: Permalinks einmal speichern (Rewrite flush), dann `/sitemap.xml` aufrufen und prüfen, ob alle relevanten Seiten/Beiträge gelistet sind.
+
+### Phase C – Feinschliff / Optional
+
+- [x] **C1: Performance-Feintuning**
+  - Ziel: Möglichst hohe Lighthouse-/Core-Web-Vitals-Werte ohne Overengineering.
+  - Umsetzung:
+    - Header-Logo mit fester `height` und `decoding="async"` zur Reduktion von Layout-Shift und schnelleren Dekodierung.
+    - Theme-JS (`ortsverein-nv-theme`) wird mit `defer` geladen, um den initialen Renderpfad nicht zu blockieren.
+  - Test-Idee: Lighthouse/Audit auf Startseite und Unterseiten ausführen und insbesondere LCP/TBT prüfen; sicherstellen, dass Interaktivität (Burger, Kalender-Interaktion) weiterhin funktioniert.
+
+- [ ] **C2: Accessibility-Feinschliff**
+  - Ziel: Barrierefreiheit von „gut“ auf „sehr gut“ bringen.
+  - Mögliche Maßnahmen: Fokus-/Kontrast-Optimierung, Keyboard-Navigation, Screenreader-Texte, ARIA-Feinschliff.
+  - Test-Idee: Tastatur-Only-Nutzung, Screenreader-Kurztesten (z. B. VoiceOver/NVDA) und AXE/WCAG-Checks.
+
+- [ ] **C3: KI-/LLM-Optimierungen**
+  - Ziel: Theme-Inhalte für KI-/LLM-Modelle noch besser nutzbar machen – klar getrennt von klassischem SEO.
+  - Mögliche Maßnahmen: zusätzliche strukturierte Entitäten, optionale `llms.txt`-Datei, konsistente Organisations-/Angebotsbeschreibungen.
+  - Test-Idee: Quelltext/Head auf zusätzliche KI-spezifische Strukturen prüfen, sicherstellen, dass klassisches SEO unverändert sauber bleibt.
+
+---
+
+## Weitere Inhalte / noch umzusetzen
 
 | Nr. | Aufgabe | Anmerkung |
 |-----|--------|-----------|

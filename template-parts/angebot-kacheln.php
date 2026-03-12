@@ -61,8 +61,33 @@ get_template_part( 'template-parts/section-header', null, array(
 <div class="card-grid">
 	<?php foreach ( $ortsverein_nv_kacheln as $k ) : ?>
 		<?php
-		$ortsverein_nv_page = get_page_by_path( $k['slug'] );
-		$ortsverein_nv_url  = $ortsverein_nv_page ? get_permalink( $ortsverein_nv_page ) : $ortsverein_nv_home;
+		$option_key = '';
+		switch ( $k['slug'] ) {
+			case 'begegnung':
+				$option_key = 'page_begegnung';
+				break;
+			case 'mitgliedschaft':
+				$option_key = 'page_membership';
+				break;
+			case 'termine':
+				$option_key = 'page_calendar';
+				break;
+			case 'beratung':
+			default:
+				$option_key = '';
+				break;
+		}
+
+		if ( $option_key ) {
+			$ortsverein_nv_url = ortsverein_nv_get_page_url_from_option( $option_key, $k['slug'] );
+		} else {
+			$ortsverein_nv_page = get_page_by_path( $k['slug'] );
+			$ortsverein_nv_url  = $ortsverein_nv_page ? get_permalink( $ortsverein_nv_page ) : $ortsverein_nv_home;
+		}
+
+		if ( ! $ortsverein_nv_url ) {
+			$ortsverein_nv_url = $ortsverein_nv_home;
+		}
 		$ortsverein_nv_class = isset( $k['css_class'] ) ? ' ' . esc_attr( $k['css_class'] ) : '';
 		?>
 		<a href="<?php echo esc_url( $ortsverein_nv_url ); ?>" class="card fade-in<?php echo $ortsverein_nv_class; ?>" style="--card-accent: <?php echo esc_attr( $k['accent'] ); ?>; --card-icon-bg: <?php echo esc_attr( $k['icon_bg'] ); ?>;">

@@ -27,7 +27,7 @@ $ortsverein_nv_logo_url = get_template_directory_uri() . '/assets/images/logo.sv
 <header id="site-header" role="banner">
 	<div class="header-inner">
 		<a href="<?php echo esc_url( $ortsverein_nv_home_url ); ?>" class="brand" aria-label="<?php esc_attr_e( 'AWO Ortsverein Neukirchen-Vluyn – Startseite', 'ortsverein-nv' ); ?>">
-			<img src="<?php echo esc_url( $ortsverein_nv_logo_url ); ?>" alt="<?php esc_attr_e( 'AWO Ortsverein Neukirchen-Vluyn', 'ortsverein-nv' ); ?>" width="120" class="brand-icon">
+			<img src="<?php echo esc_url( $ortsverein_nv_logo_url ); ?>" alt="<?php esc_attr_e( 'AWO Ortsverein Neukirchen-Vluyn', 'ortsverein-nv' ); ?>" width="120" height="120" class="brand-icon" decoding="async">
 			<span class="brand-text">
 				<span class="awo"><?php esc_html_e( 'AWO Team', 'ortsverein-nv' ); ?></span>
 				<span class="ov"><?php esc_html_e( 'Neukirchen-Vluyn', 'ortsverein-nv' ); ?></span>

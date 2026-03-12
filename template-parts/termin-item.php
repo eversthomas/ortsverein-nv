@@ -16,15 +16,16 @@ if ( empty( $args['start'] ) || ! ( $args['start'] instanceof DateTime ) ) {
 	return;
 }
 
-$start = $args['start'];
-$title = isset( $args['title'] ) ? $args['title'] : __( 'Termin', 'ortsverein-nv' );
+$start    = $args['start'];
+$title    = isset( $args['title'] ) ? $args['title'] : __( 'Termin', 'ortsverein-nv' );
 $location = isset( $args['location'] ) ? $args['location'] : '';
-$tag = $start->format( 'd' );
+$tag      = $start->format( 'd' );
 $mon_short = ortsverein_nv_ics_month_short( $start );
 $wochentag = ortsverein_nv_ics_weekday( $start );
-$monat = isset( $GLOBALS['ortsverein_nv_monate'][ (int) $start->format( 'n' ) ] ) ? $GLOBALS['ortsverein_nv_monate'][ (int) $start->format( 'n' ) ] : $start->format( 'F' );
+$monate    = ortsverein_nv_get_month_names();
+$monat     = isset( $monate[ (int) $start->format( 'n' ) ] ) ? $monate[ (int) $start->format( 'n' ) ] : $start->format( 'F' );
 $datumzeile = $wochentag . ', ' . $start->format( 'j' ) . '. ' . $monat . ' ' . $start->format( 'Y' );
-$uhrzeit = $start->format( 'H:i' ) . ' Uhr';
+$uhrzeit    = $start->format( 'H:i' ) . ' Uhr';
 $datum_ymd = $start->format( 'Y-m-d' );
 ?>
 <div class="termin-item" data-date="<?php echo esc_attr( $datum_ymd ); ?>">

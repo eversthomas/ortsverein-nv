@@ -15,10 +15,10 @@ if ( ! preg_match( '/^\d{4}-\d{2}$/', $kal_month ) ) {
 	$kal_month = gmdate( 'Y-m' );
 }
 $parts = explode( '-', $kal_month );
-$kal_year = (int) $parts[0];
+$kal_year      = (int) $parts[0];
 $kal_month_num = (int) $parts[1];
-$monate = $GLOBALS['ortsverein_nv_monate'];
-$monat_name = isset( $monate[ $kal_month_num ] ) ? $monate[ $kal_month_num ] : $kal_month;
+$monate        = ortsverein_nv_get_month_names();
+$monat_name    = isset( $monate[ $kal_month_num ] ) ? $monate[ $kal_month_num ] : $kal_month;
 
 $termine = ortsverein_nv_get_events_for_month( $kal_year, $kal_month_num );
 $event_tage = array();
@@ -42,7 +42,7 @@ $next->modify( '+1 month' );
 $prev_param = $prev->format( 'Y-m' );
 $next_param = $next->format( 'Y-m' );
 $kalender_url = get_permalink();
-$kalender_url = add_query_arg( 'kal_month', '%s', $kalender_url );
+$kalender_url = add_query_arg( 'kal_month', '%s', $kalender_url ) . '#kalender-h2';
 
 get_header();
 ?>

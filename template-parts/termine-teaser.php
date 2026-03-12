@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$heute = new DateTime( 'now', new DateTimeZone( 'Europe/Berlin' ) );
-$kal_year = (int) $heute->format( 'Y' );
+$heute         = new DateTime( 'now', new DateTimeZone( 'Europe/Berlin' ) );
+$kal_year      = (int) $heute->format( 'Y' );
 $kal_month_num = (int) $heute->format( 'n' );
-$monate = $GLOBALS['ortsverein_nv_monate'];
-$monat_name = isset( $monate[ $kal_month_num ] ) ? $monate[ $kal_month_num ] : '';
+$monate        = ortsverein_nv_get_month_names();
+$monat_name    = isset( $monate[ $kal_month_num ] ) ? $monate[ $kal_month_num ] : '';
 
 $termine = ortsverein_nv_get_events_for_month( $kal_year, $kal_month_num );
 $event_tage = array();
@@ -26,8 +26,7 @@ $tage_im_monat = (int) gmdate( 't', strtotime( $kal_year . '-' . $kal_month_num 
 $erster = new DateTime( $kal_year . '-' . $kal_month_num . '-01', new DateTimeZone( 'Europe/Berlin' ) );
 $start_offset = (int) $erster->format( 'N' ) - 1; // Mo=0
 
-$kalender_page = get_page_by_path( 'kalender' );
-$kalender_url = $kalender_page ? get_permalink( $kalender_page ) : '';
+$kalender_url = ortsverein_nv_get_page_url_from_option( 'page_calendar', 'kalender' );
 
 /** Auf Desktop: erste Termine neben Kalender, Rest darunter in 2 Spalten. */
 $termine_oben_max = 5;
