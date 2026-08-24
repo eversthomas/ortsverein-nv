@@ -106,6 +106,13 @@ function ortsverein_nv_build_meta_description( $description ) {
 	}
 
 	if ( is_home() || is_front_page() ) {
+		if ( function_exists( 'ortsverein_nv_get_option' ) ) {
+			$seo_default = trim( (string) ortsverein_nv_get_option( 'seo_default_description', '' ) );
+			if ( '' !== $seo_default ) {
+				return $seo_default;
+			}
+		}
+
 		$site_desc = get_bloginfo( 'description', 'display' );
 		if ( ! empty( $site_desc ) ) {
 			return $site_desc;

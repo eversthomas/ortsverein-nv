@@ -73,6 +73,9 @@ function ortsverein_nv_ensure_core_pages() {
 		'kontakt'        => array(
 			'title'   => __( 'Kontakt', 'ortsverein-nv' ),
 			'content' => __( 'Kontaktdaten des Ortsvereins. Du kannst hier Adresse, Telefon und E-Mail ergänzen.', 'ortsverein-nv' ),
+			'meta'    => array(
+				'_wp_page_template' => 'page-kontakt.php',
+			),
 		),
 		'impressum'      => array(
 			'title'   => __( 'Impressum', 'ortsverein-nv' ),

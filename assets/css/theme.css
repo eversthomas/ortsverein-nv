@@ -802,6 +802,9 @@ section.bg-rot-hell { background: var(--rot-hell); }
 .footer-links li { margin: 0; }
 .footer-links a { font-size: 0.85rem; color: rgba(255,255,255,0.6); text-decoration: none; transition: color var(--transition); }
 .footer-links a:hover { color: #fff; }
+.footer-contact { display: flex; gap: var(--abstand-m); flex-wrap: wrap; align-items: center; }
+.footer-contact a { font-size: 0.85rem; color: rgba(255,255,255,0.6); text-decoration: none; transition: color var(--transition); }
+.footer-contact a:hover { color: #fff; }
 .footer-proto {
   display: flex;
   align-items: center;
@@ -838,6 +841,16 @@ section.bg-rot-hell { background: var(--rot-hell); }
 .info-box.gruen { border-color: var(--gruen); background: #f2fae8; }
 .info-box h4 { font-size: 1rem; margin-bottom: 6px; }
 .info-box p { font-size: 0.92rem; max-width: unset; }
+
+/* Kontaktseite */
+.kontakt-box { margin-top: var(--abstand-l); }
+.kontakt-box h2 { margin-bottom: 16px; }
+.kontakt-box-label { font-size: 1rem; margin: 0 0 6px; }
+.kontakt-address { font-style: normal; font-size: 0.92rem; }
+.kontakt-list { list-style: none; margin: 16px 0 0; padding: 0; }
+.kontakt-list li { margin: 0 0 12px; }
+.kontakt-list li:last-child { margin-bottom: 0; }
+.kontakt-list-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--grau-dunkel); margin-bottom: 2px; }
 
 /* Begegnungsstätte-Teaser (Startseite) */
 .begegnung-teaser-lead { font-size: 1.05rem; color: var(--grau-dunkel); margin: 16px 0 24px; }

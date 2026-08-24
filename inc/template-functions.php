@@ -65,3 +65,47 @@ function ortsverein_nv_get_page_url_from_option( $option_key, $fallback_slug = '
 	$page_id = ortsverein_nv_get_page_id_from_option( $option_key, $fallback_slug );
 	return $page_id > 0 ? get_permalink( $page_id ) : '';
 }
+
+/**
+ * Adresszeilen des Ortsvereins aus den Theme-Optionen.
+ * Leer, wenn Straße, PLZ und Ort nicht gepflegt sind.
+ *
+ * @return string[] Nicht-leere Zeilen, z. B. ["Musterstraße 1", "12345 Musterstadt"].
+ */
+function ortsverein_nv_get_org_address_lines() {
+	if ( ! function_exists( 'ortsverein_nv_get_option' ) ) {
+		return array();
+	}
+
+	$street = trim( (string) ortsverein_nv_get_option( 'org_street', '' ) );
+	$zip    = trim( (string) ortsverein_nv_get_option( 'org_zip', '' ) );
+	$city   = trim( (string) ortsverein_nv_get_option( 'org_city', '' ) );
+
+	$lines = array();
+	if ( '' !== $street ) {
+		$lines[] = $street;
+	}
+
+	$zip_city = trim( $zip . ' ' . $city );
+	if ( '' !== $zip_city ) {
+		$lines[] = $zip_city;
+	}
+
+	return $lines;
+}
+
+/**
+ * Bereitet eine Telefonnummer für tel:-Links vor (Ziffern und optionales +).
+ *
+ * @param string $phone Öffentlich angezeigte Nummer.
+ * @return string
+ */
+function ortsverein_nv_get_phone_tel_href( $phone ) {
+	$phone = trim( (string) $phone );
+	if ( '' === $phone ) {
+		return '';
+	}
+
+	$href = preg_replace( '/[^\d+]/', '', $phone );
+	return is_string( $href ) ? $href : '';
+}
