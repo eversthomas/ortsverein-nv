@@ -18,16 +18,19 @@ function ortsverein_nv_critical_css() {
 	if ( is_admin() ) {
 		return;
 	}
-	$critical = ':root{--rot:#e2001a;--weiss:#fff;--schwarz:#1a1a1a;--grau-rand:#e0e0e0;--font-sans:-apple-system,"Segoe UI",Helvetica Neue,Arial,sans-serif;--breite:1140px;--abstand-m:24px;--radius-s:8px;}
+
+	$logo_size = function_exists( 'ortsverein_nv_get_header_logo_size' ) ? ortsverein_nv_get_header_logo_size() : 44;
+
+	$critical = ':root{--header-logo-size:' . (int) $logo_size . 'px;--rot:#e2001a;--weiss:#fff;--schwarz:#1a1a1a;--grau-rand:#e0e0e0;--font-sans:-apple-system,"Segoe UI",Helvetica Neue,Arial,sans-serif;--breite:1140px;--abstand-m:24px;--radius-s:8px;}
 .skip-link{position:absolute;top:-100%;left:1rem;background:var(--rot);color:#fff;padding:.6em 1.2em;border-radius:var(--radius-s);font-size:1rem;font-weight:600;z-index:9999;transition:top .2s;}
 .skip-link:focus{top:1rem;}
 #site-header{position:sticky;top:0;z-index:1000;background:var(--weiss);border-bottom:2px solid var(--grau-rand);}
-.header-inner{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:14px var(--abstand-m);max-width:var(--breite);margin:0 auto;}
+.header-inner{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:max(14px,calc((var(--header-logo-size,44px) - 44px) / 2 + 14px)) var(--abstand-m);max-width:var(--breite);margin:0 auto;}
 .container{width:100%;max-width:var(--breite);margin:0 auto;padding:0 var(--abstand-m);}
 #hero{min-height:280px;background:var(--grau-hell,#f2f2f2);}
 .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:var(--breite);margin:0 auto;padding:48px var(--abstand-m);}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
-.brand img{width:120px;height:auto;display:block;}
+.brand-icon{width:var(--header-logo-size,44px);height:var(--header-logo-size,44px);display:block;flex-shrink:0;}
 @media(max-width:900px){.hero-inner{grid-template-columns:1fr;}}
 @media(prefers-reduced-motion:reduce){.skip-link{transition:top .01ms;}}';
 	echo '<style id="ortsverein-nv-critical-css">' . $critical . '</style>' . "\n";
@@ -47,6 +50,9 @@ function ortsverein_nv_enqueue_assets() {
 		array(),
 		$version
 	);
+
+	$logo_size = function_exists( 'ortsverein_nv_get_header_logo_size' ) ? ortsverein_nv_get_header_logo_size() : 44;
+	wp_add_inline_style( 'ortsverein-nv-theme', ':root { --header-logo-size: ' . (int) $logo_size . 'px; }' );
 
 	$ortsverein_nv_hero_id = get_theme_mod( 'ortsverein_nv_hero_background', '' );
 	if ( $ortsverein_nv_hero_id ) {

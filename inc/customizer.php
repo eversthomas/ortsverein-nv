@@ -15,6 +15,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function ortsverein_nv_customize_register( WP_Customize_Manager $wp_customize ) {
 	$wp_customize->add_section(
+		'ortsverein_nv_header',
+		array(
+			'title'    => __( 'Header', 'ortsverein-nv' ),
+			'priority' => 25,
+		)
+	);
+
+	$wp_customize->add_setting( 'ortsverein_nv_header_height', array(
+		'default'           => 44,
+		'sanitize_callback' => 'ortsverein_nv_sanitize_header_height',
+		'transport'         => 'postMessage',
+	) );
+	$wp_customize->add_control( 'ortsverein_nv_header_height', array(
+		'label'       => __( 'Logo-/Header-Höhe (px)', 'ortsverein-nv' ),
+		'description' => __( 'Höhe des Logos in der Kopfzeile. Der Header passt sich automatisch an.', 'ortsverein-nv' ),
+		'section'     => 'ortsverein_nv_header',
+		'type'        => 'number',
+		'input_attrs' => array(
+			'min'  => 32,
+			'max'  => 140,
+			'step' => 2,
+		),
+	) );
+
+	$wp_customize->add_section(
 		'ortsverein_nv_hero',
 		array(
 			'title'    => __( 'Hero-Bereich (Startseite)', 'ortsverein-nv' ),
@@ -180,3 +205,43 @@ function ortsverein_nv_customize_save_ics() {
 	}
 }
 add_action( 'customize_save_after', 'ortsverein_nv_customize_save_ics' );
+
+/**
+ * Header-Logo-Höhe auf 32–140 px begrenzen.
+ *
+ * @param mixed $value Roher Customizer-Wert.
+ * @return int
+ */
+function ortsverein_nv_sanitize_header_height( $value ) {
+	$value = absint( $value );
+	if ( $value < 32 ) {
+		return 32;
+	}
+	if ( $value > 140 ) {
+		return 140;
+	}
+	return $value;
+}
+
+/**
+ * Aktuelle Logo-/Header-Höhe in Pixeln.
+ *
+ * @return int
+ */
+function ortsverein_nv_get_header_logo_size() {
+	return ortsverein_nv_sanitize_header_height( get_theme_mod( 'ortsverein_nv_header_height', 44 ) );
+}
+
+/**
+ * Live-Vorschau-Skript für den Customizer.
+ */
+function ortsverein_nv_customize_preview_js() {
+	wp_enqueue_script(
+		'ortsverein-nv-customizer-preview',
+		get_template_directory_uri() . '/assets/js/customizer-preview.js',
+		array( 'customize-preview' ),
+		wp_get_theme()->get( 'Version' ),
+		true
+	);
+}
+add_action( 'customize_preview_init', 'ortsverein_nv_customize_preview_js' );
