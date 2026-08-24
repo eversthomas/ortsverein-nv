@@ -11,6 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $ortsverein_nv_begegnung_url = ortsverein_nv_get_page_url_from_option( 'page_begegnung', 'begegnung' );
+
+$ortsverein_nv_org_street = trim( (string) ortsverein_nv_get_option( 'org_street', '' ) );
+$ortsverein_nv_org_zip    = trim( (string) ortsverein_nv_get_option( 'org_zip', '' ) );
+$ortsverein_nv_org_city   = trim( (string) ortsverein_nv_get_option( 'org_city', '' ) );
+$ortsverein_nv_has_address = ( '' !== $ortsverein_nv_org_street || '' !== $ortsverein_nv_org_zip || '' !== $ortsverein_nv_org_city );
+$ortsverein_nv_zip_city    = trim( $ortsverein_nv_org_zip . ' ' . $ortsverein_nv_org_city );
 ?>
 
 <section id="begegnung" class="section-padding bg-rot-hell" aria-labelledby="begegnung-teaser-h2">
@@ -23,7 +29,19 @@ $ortsverein_nv_begegnung_url = ortsverein_nv_get_page_url_from_option( 'page_beg
 				<p class="begegnung-teaser-text"><?php esc_html_e( 'Ob du schon seit Jahren dabei bist oder das erste Mal vorbeischaust: Die Tür steht offen. Viele unserer regelmäßigen Gäste sind durch die Begegnungsstätte zu echten Freundschaften gelangt.', 'ortsverein-nv' ); ?></p>
 				<div class="info-box begegnung-teaser-address">
 					<h4><?php esc_html_e( 'Adresse der Begegnungsstätte', 'ortsverein-nv' ); ?></h4>
-					<p><?php esc_html_e( '[Adresse der Begegnungsstätte – wird ergänzt]', 'ortsverein-nv' ); ?></p>
+					<?php if ( $ortsverein_nv_has_address ) : ?>
+						<p>
+							<?php if ( '' !== $ortsverein_nv_org_street ) : ?>
+								<?php echo esc_html( $ortsverein_nv_org_street ); ?>
+								<?php if ( '' !== $ortsverein_nv_zip_city ) : ?><br><?php endif; ?>
+							<?php endif; ?>
+							<?php if ( '' !== $ortsverein_nv_zip_city ) : ?>
+								<?php echo esc_html( $ortsverein_nv_zip_city ); ?>
+							<?php endif; ?>
+						</p>
+					<?php else : ?>
+						<p><?php esc_html_e( '[Adresse der Begegnungsstätte – wird ergänzt]', 'ortsverein-nv' ); ?></p>
+					<?php endif; ?>
 				</div>
 				<?php if ( $ortsverein_nv_begegnung_url ) : ?>
 					<p class="begegnung-teaser-cta">
