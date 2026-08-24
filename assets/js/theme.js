@@ -1,9 +1,23 @@
 /**
  * Theme JavaScript – Ortsverein NV
- * Burger-Menü, Kalender-Tag-Klick (Termin hervorheben), Fade-in.
+ * Sticky-Header, Burger-Menü, Kalender-Tag-Klick (Termin hervorheben), Fade-in.
  */
 (function() {
   'use strict';
+
+  // ===== STICKY HEADER =====
+  var header = document.getElementById('site-header');
+  if (header) {
+    function updateHeaderScrolled() {
+      if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+    window.addEventListener('scroll', updateHeaderScrolled, { passive: true });
+    updateHeaderScrolled();
+  }
 
   // ===== BURGER MENU =====
   var burgerBtn = document.querySelector('.burger-btn');
