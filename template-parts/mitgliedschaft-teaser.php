@@ -43,22 +43,37 @@ $ortsverein_nv_kontakt_url  = ortsverein_nv_get_page_url_from_option( 'page_cont
 			<div>
 				<div class="mitglied-beitrag-box">
 					<h3 class="mitglied-beitrag-title"><?php esc_html_e( 'Beitrag', 'ortsverein-nv' ); ?></h3>
-					<p class="mitglied-beitrag-hinweis"><?php esc_html_e( 'Platzhalter – bitte aktuellen Beitrag eintragen.', 'ortsverein-nv' ); ?></p>
+					<p class="mitglied-beitrag-hinweis"><?php esc_html_e( 'Mitgliedschaftsformen und Mindestbeiträge', 'ortsverein-nv' ); ?></p>
 					<div class="mitglied-beitrag-list">
 						<div class="mitglied-beitrag-row">
-							<span><?php esc_html_e( 'Regulärer Beitrag', 'ortsverein-nv' ); ?></span>
-							<strong>[Betrag] €/<?php esc_html_e( 'Monat', 'ortsverein-nv' ); ?></strong>
+							<span>
+								<?php esc_html_e( 'Einzelpersonen und Alleinerziehende', 'ortsverein-nv' ); ?>
+							</span>
+							<strong><?php esc_html_e( 'ab 2,50 €/Monat', 'ortsverein-nv' ); ?></strong>
 						</div>
 						<div class="mitglied-beitrag-row">
-							<span><?php esc_html_e( 'Ermäßigt', 'ortsverein-nv' ); ?></span>
-							<strong>[Betrag] €/<?php esc_html_e( 'Monat', 'ortsverein-nv' ); ?></strong>
+							<span>
+								<?php esc_html_e( 'Familien und Lebensgemeinschaften', 'ortsverein-nv' ); ?>
+								<small><?php esc_html_e( 'Gemeinsames Mitgliedsbuch, beide Partner haben Wahlrecht', 'ortsverein-nv' ); ?></small>
+							</span>
+							<strong><?php esc_html_e( 'ab 4,00 €/Monat', 'ortsverein-nv' ); ?></strong>
 						</div>
 						<div class="mitglied-beitrag-row">
-							<span><?php esc_html_e( 'Familienbeitrag', 'ortsverein-nv' ); ?></span>
-							<strong>[Betrag] €/<?php esc_html_e( 'Monat', 'ortsverein-nv' ); ?></strong>
+							<span>
+								<?php esc_html_e( 'Minderjährige Kinder', 'ortsverein-nv' ); ?>
+								<small><?php esc_html_e( 'im Rahmen einer Familienmitgliedschaft', 'ortsverein-nv' ); ?></small>
+							</span>
+							<strong><?php esc_html_e( 'beitragsfrei', 'ortsverein-nv' ); ?></strong>
+						</div>
+						<div class="mitglied-beitrag-row">
+							<span>
+								<?php esc_html_e( 'Jugendwerk (junge Menschen bis 30 Jahre)', 'ortsverein-nv' ); ?>
+								<small><?php esc_html_e( 'Doppelmitgliedschaft oder eigenständig; Angebote junger AWO-Gliederungen teils kostenfrei', 'ortsverein-nv' ); ?></small>
+							</span>
+							<strong><?php esc_html_e( 'ab 2,50 €/Monat', 'ortsverein-nv' ); ?></strong>
 						</div>
 					</div>
-					<p class="mitglied-beitrag-note">* <?php esc_html_e( 'Beitragsangaben als Platzhalter', 'ortsverein-nv' ); ?></p>
+					<p class="mitglied-beitrag-note"><?php esc_html_e( 'Alle Angaben als Mindestbeiträge.', 'ortsverein-nv' ); ?></p>
 				</div>
 			</div>
 		</div>

@@ -45,6 +45,7 @@ $ortsverein_nv_has_contact = ( '' !== $ortsverein_nv_email || '' !== $ortsverein
 					'theme_location' => 'footer',
 					'container'      => false,
 					'menu_class'     => 'footer-links-list',
+					'fallback_cb'    => false,
 					'depth'          => 1,
 				) );
 				?>

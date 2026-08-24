@@ -28,9 +28,9 @@ function ortsverein_nv_setup_theme() {
 	) );
 
 	register_nav_menus( array(
-		'primary'  => __( 'Hauptmenü', 'ortsverein-nv' ),
-		'service'  => __( 'Schnellzugriff (Kontakt, Downloads, Kalender)', 'ortsverein-nv' ),
-		'footer'   => __( 'Footer (Impressum, Datenschutz, Barrierefreiheit, Kontakt)', 'ortsverein-nv' ),
+		'primary' => __( 'Hauptmenü', 'ortsverein-nv' ),
+		'service' => __( 'Schnellzugriff', 'ortsverein-nv' ),
+		'footer'  => __( 'Footer-Menü', 'ortsverein-nv' ),
 	) );
 }
 

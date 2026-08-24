@@ -1,9 +1,9 @@
 <?php
 /**
  * Template Name: Kontakt
- * Template: Kontakt
  *
- * Seiteninhalt plus strukturierte Kontakt-Box aus den Theme-Optionen.
+ * Optionales Seiten-Template: Editor-Inhalt plus Kontakt-Box aus den Theme-Optionen.
+ * Wird nur verwendet, wenn Redakteurinnen und Redakteure es unter „Seitenattribute“ zuweisen.
  *
  * @package Ortsverein_NV
  */

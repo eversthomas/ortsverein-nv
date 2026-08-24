@@ -133,8 +133,9 @@ li { margin-bottom: 0.4em; }
   flex-shrink: 0;
 }
 .brand-icon {
-  width: var(--header-logo-size, 44px);
   height: var(--header-logo-size, 44px);
+  width: auto;
+  max-width: none;
   flex-shrink: 0;
   object-fit: contain;
 }
@@ -899,14 +900,32 @@ section.bg-rot-hell { background: var(--rot-hell); }
 .mitglied-beitrag-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
   padding: 14px 16px;
   background: var(--weiss);
   border-radius: var(--radius-s);
   border: 1.5px solid var(--grau-rand);
 }
-.mitglied-beitrag-row strong { font-weight: 800; color: var(--rot); font-size: 1.1rem; }
-.mitglied-beitrag-row span { font-weight: 600; }
+.mitglied-beitrag-row strong {
+  font-weight: 800;
+  color: var(--rot);
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  text-align: right;
+}
+.mitglied-beitrag-row span {
+  font-weight: 600;
+  line-height: 1.35;
+}
+.mitglied-beitrag-row small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--grau-mittel);
+  margin-top: 4px;
+  line-height: 1.4;
+}
 .mitglied-beitrag-note { font-size: 0.8rem; color: var(--grau-mittel); margin-top: 14px; }
 
 /* Benefits list */
@@ -967,10 +986,6 @@ section.bg-rot-hell { background: var(--rot-hell); }
 @media (max-width: 600px) {
   :root { --abstand-xl: 56px; --abstand-l: 36px; }
   .header-inner { align-items: center; }
-  .brand-icon {
-    width: min(var(--header-logo-size, 44px), 72px);
-    height: min(var(--header-logo-size, 44px), 72px);
-  }
   .card-grid { grid-template-columns: 1fr; }
   .termin-item { grid-template-columns: 64px 1fr; gap: 14px; }
   .termin-uhrzeit { display: none; }

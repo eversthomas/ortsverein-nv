@@ -1,0 +1,23 @@
+# Betriebssystem
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Desktop.ini
+
+# Archive und Logs
+*.zip
+*.tar.gz
+*.log
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (falls später genutzt)
+node_modules/
+
+# Statische HTML-Vorlage nur lokal als Referenz, nicht im Theme-Repo
+html-vorlage/

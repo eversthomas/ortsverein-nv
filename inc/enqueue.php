@@ -30,12 +30,28 @@ function ortsverein_nv_critical_css() {
 #hero{min-height:280px;background:var(--grau-hell,#f2f2f2);}
 .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:var(--breite);margin:0 auto;padding:48px var(--abstand-m);}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
-.brand-icon{width:var(--header-logo-size,44px);height:var(--header-logo-size,44px);display:block;flex-shrink:0;}
+.brand-icon{height:var(--header-logo-size,44px);width:auto;max-width:none;display:block;flex-shrink:0;}
 @media(max-width:900px){.hero-inner{grid-template-columns:1fr;}}
 @media(prefers-reduced-motion:reduce){.skip-link{transition:top .01ms;}}';
 	echo '<style id="ortsverein-nv-critical-css">' . $critical . '</style>' . "\n";
 }
 add_action( 'wp_head', 'ortsverein_nv_critical_css', 1 );
+
+/**
+ * Logo-/Header-Höhe nach dem Stylesheet ausgeben, damit die Werte theme.css überschreiben.
+ */
+function ortsverein_nv_header_size_style() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$css = function_exists( 'ortsverein_nv_get_header_size_css' )
+		? ortsverein_nv_get_header_size_css()
+		: ':root{--header-logo-size:44px;}';
+
+	echo '<style id="ortsverein-nv-header-size">' . $css . '</style>' . "\n";
+}
+add_action( 'wp_head', 'ortsverein_nv_header_size_style', 20 );
 
 /**
  * Frontend CSS und JS laden.
@@ -51,8 +67,10 @@ function ortsverein_nv_enqueue_assets() {
 		$version
 	);
 
-	$logo_size = function_exists( 'ortsverein_nv_get_header_logo_size' ) ? ortsverein_nv_get_header_logo_size() : 44;
-	wp_add_inline_style( 'ortsverein-nv-theme', ':root { --header-logo-size: ' . (int) $logo_size . 'px; }' );
+	$header_css = function_exists( 'ortsverein_nv_get_header_size_css' )
+		? ortsverein_nv_get_header_size_css()
+		: ':root { --header-logo-size: 44px; }';
+	wp_add_inline_style( 'ortsverein-nv-theme', $header_css );
 
 	$ortsverein_nv_hero_id = get_theme_mod( 'ortsverein_nv_hero_background', '' );
 	if ( $ortsverein_nv_hero_id ) {

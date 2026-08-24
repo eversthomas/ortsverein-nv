@@ -233,6 +233,23 @@ function ortsverein_nv_get_header_logo_size() {
 }
 
 /**
+ * CSS für Logo- und Header-Höhe (nach theme.css, damit es zuverlässig greift).
+ *
+ * @param int $size Logo-Höhe in Pixeln.
+ * @return string
+ */
+function ortsverein_nv_get_header_size_css( $size = 0 ) {
+	$size = $size > 0 ? ortsverein_nv_sanitize_header_height( $size ) : ortsverein_nv_get_header_logo_size();
+	$pad  = max( 14, (int) round( ( $size - 44 ) / 2 + 14 ) );
+
+	return sprintf(
+		':root{--header-logo-size:%1$dpx;}#site-header .brand-icon{height:%1$dpx;width:auto;max-width:none;max-height:%1$dpx;}#site-header .header-inner{padding-top:%2$dpx;padding-bottom:%2$dpx;}',
+		$size,
+		$pad
+	);
+}
+
+/**
  * Live-Vorschau-Skript für den Customizer.
  */
 function ortsverein_nv_customize_preview_js() {
