@@ -40,3 +40,5 @@ require_once $ortsverein_nv_inc . 'sitemap.php';
 require_once $ortsverein_nv_inc . 'schema.php';
 // SEO-Basis (Title, Meta-Description-Hook, Social-Meta).
 require_once $ortsverein_nv_inc . 'seo.php';
+// Redaktions-Doku (BS-Plugin, nur wirksam wenn das Plugin aktiv ist).
+require_once $ortsverein_nv_inc . 'redaktions-doku.php';
