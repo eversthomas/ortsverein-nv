@@ -42,7 +42,7 @@ $ortsverein_nv_logo_url = get_template_directory_uri() . '/assets/images/logo.sv
 					'container'      => false,
 					'menu_class'     => 'main-nav-list',
 					'fallback_cb'    => false,
-					'depth'          => 1,
+					'depth'          => 2,
 				) );
 				?>
 			</nav>
@@ -74,7 +74,7 @@ $ortsverein_nv_logo_url = get_template_directory_uri() . '/assets/images/logo.sv
 <?php if ( has_nav_menu( 'primary' ) || has_nav_menu( 'service' ) ) : ?>
 <nav class="mobile-nav" id="mobile-nav" aria-label="<?php esc_attr_e( 'Mobile Navigation', 'ortsverein-nv' ); ?>" aria-hidden="true" hidden>
 	<?php if ( has_nav_menu( 'primary' ) ) : ?>
-		<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'mobile-nav-list', 'fallback_cb' => false, 'depth' => 1 ) ); ?>
+		<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'mobile-nav-list', 'fallback_cb' => false, 'depth' => 2 ) ); ?>
 	<?php endif; ?>
 	<?php if ( has_nav_menu( 'primary' ) && has_nav_menu( 'service' ) ) : ?>
 		<div class="mobile-divider" aria-hidden="true"></div>

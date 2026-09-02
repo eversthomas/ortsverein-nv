@@ -56,6 +56,12 @@ get_header();
 				<h2 id="kalender-h2" class="screen-reader-text"><?php esc_html_e( 'Kalender', 'ortsverein-nv' ); ?></h2>
 				<p class="kalender-intro"><?php esc_html_e( 'Alle Termine des Ortsvereins auf einen Blick. Tage mit Veranstaltungen sind markiert.', 'ortsverein-nv' ); ?></p>
 
+				<?php if ( trim( wp_strip_all_tags( get_the_content() ) ) !== '' ) : ?>
+					<div class="entry-content kalender-entry-content">
+						<?php the_content(); ?>
+					</div>
+				<?php endif; ?>
+
 				<div class="kalender-layout">
 					<div class="kalender-grid-wrapper">
 						<div class="kalender-box">

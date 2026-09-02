@@ -57,14 +57,17 @@ add_action( 'wp_head', 'ortsverein_nv_header_size_style', 20 );
  * Frontend CSS und JS laden.
  */
 function ortsverein_nv_enqueue_assets() {
-	$version     = wp_get_theme()->get( 'Version' );
+	$template_dir = get_template_directory();
 	$template_uri = get_template_directory_uri();
+
+	$css_path    = $template_dir . '/assets/css/theme.css';
+	$css_version = file_exists( $css_path ) ? filemtime( $css_path ) : wp_get_theme()->get( 'Version' );
 
 	wp_enqueue_style(
 		'ortsverein-nv-theme',
 		$template_uri . '/assets/css/theme.css',
 		array(),
-		$version
+		$css_version
 	);
 
 	$header_css = function_exists( 'ortsverein_nv_get_header_size_css' )
@@ -81,11 +84,14 @@ function ortsverein_nv_enqueue_assets() {
 		}
 	}
 
+	$js_path    = $template_dir . '/assets/js/theme.js';
+	$js_version = file_exists( $js_path ) ? filemtime( $js_path ) : wp_get_theme()->get( 'Version' );
+
 	wp_enqueue_script(
 		'ortsverein-nv-theme',
 		$template_uri . '/assets/js/theme.js',
 		array(),
-		$version,
+		$js_version,
 		true
 	);
 }

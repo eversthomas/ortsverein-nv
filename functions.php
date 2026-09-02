@@ -20,6 +20,8 @@ require_once $ortsverein_nv_inc . 'enqueue.php';
 require_once $ortsverein_nv_inc . 'template-functions.php';
 // Install-/Initial-Logik (Seiten, Menüs, Optionen).
 require_once $ortsverein_nv_inc . 'install.php';
+// Meta-Boxen (Seiten-Sidebar ein/aus).
+require_once $ortsverein_nv_inc . 'meta-boxes.php';
 // ICS-Kalender.
 require_once $ortsverein_nv_inc . 'ics.php';
 // Customizer.

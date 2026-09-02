@@ -76,6 +76,25 @@ li { margin-bottom: 0.4em; }
 .entry-content table th,
 .entry-content table td { padding: 8px 12px; border: 1px solid var(--grau-rand); text-align: left; }
 
+/* ===== SEITEN-SIDEBAR ===== */
+.page-layout-with-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--abstand-l);
+  align-items: start;
+}
+.page-sidebar { display: flex; flex-direction: column; gap: var(--abstand-m); }
+.page-sidebar .widget {
+  padding: var(--abstand-m);
+  background: var(--grau-hell);
+  border-radius: var(--radius-m);
+}
+.page-sidebar .widget-title { font-size: 1.05rem; margin-bottom: 0.6em; color: var(--schwarz); }
+.page-sidebar .widget > *:last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  .page-layout-with-sidebar { grid-template-columns: 1fr; }
+}
+
 /* ===== LAYOUT ===== */
 .container {
   width: 100%;
@@ -164,6 +183,42 @@ li { margin-bottom: 0.4em; }
 .main-nav a:hover, .main-nav a:focus-visible { background: var(--grau-hell); color: var(--rot); }
 .main-nav a.intern-link { color: var(--grau-mittel); font-size: 0.82rem; }
 .nav-divider { width: 1px; height: 20px; background: var(--grau-rand); margin: 0 6px; }
+
+/* Dropdown-Untermenüs (Hauptmenü, Desktop) */
+.main-nav-list li { position: relative; }
+.main-nav-list .menu-item-has-children > a { padding-right: 26px; }
+.main-nav-list .menu-item-has-children > a::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+.main-nav-list .sub-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1001;
+  min-width: 220px;
+  margin: 4px 0 0;
+  padding: 6px;
+  flex-direction: column;
+  gap: 0;
+  background: var(--weiss);
+  border: 1px solid var(--grau-rand);
+  border-radius: var(--radius-s);
+  box-shadow: var(--shadow-m);
+}
+.main-nav-list li:hover > .sub-menu,
+.main-nav-list li:focus-within > .sub-menu { display: flex; }
+.main-nav-list .sub-menu li { margin: 0; }
+.main-nav-list .sub-menu a { display: block; padding: 8px 12px; }
 .service-links { display: flex; align-items: center; gap: 2px; }
 .service-links a { font-size: 0.8rem; color: var(--grau-mittel); padding: 6px 10px; }
 .service-links a:hover { color: var(--rot); background: var(--rot-hell); }
@@ -249,6 +304,8 @@ li { margin-bottom: 0.4em; }
 .mobile-nav a.mobile-service,
 .mobile-nav .mobile-service-list a { font-size: 1rem; background: none; color: var(--grau-dunkel); padding: 12px 20px; }
 .mobile-nav a.mobile-intern { color: var(--grau-mittel); font-size: 1rem; background: none; }
+.mobile-nav .sub-menu { margin-left: 16px; }
+.mobile-nav .sub-menu a { font-size: 1rem; font-weight: 500; background: none; padding: 12px 20px; }
 
 /* ===== HERO ===== */
 #hero {
@@ -645,6 +702,7 @@ section.bg-rot-hell { background: var(--rot-hell); }
 
 /* ===== KALENDER ===== */
 .kalender-intro { color: var(--grau-dunkel); margin: 12px 0 var(--abstand-m); max-width: 60ch; }
+.kalender-entry-content { margin: 0 0 var(--abstand-m); max-width: 72ch; }
 .kalender-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
