@@ -38,14 +38,14 @@ add_action( 'after_setup_theme', 'ortsverein_nv_setup_theme' );
 
 /**
  * Widget-Bereiche registrieren.
- * „Seiten-Sidebar“ erscheint nur auf Seiten, bei denen sie im Editor aktiviert wurde
- * (siehe inc/meta-boxes.php, ortsverein_nv_page_has_sidebar()).
+ * Redakteure wählen im Seiten-Editor pro Seite aus, welche dieser Widgets dort
+ * erscheinen (siehe inc/meta-boxes.php, ortsverein_nv_get_selected_sidebar_widgets()).
  */
 function ortsverein_nv_register_sidebars() {
 	register_sidebar( array(
 		'name'          => __( 'Seiten-Sidebar', 'ortsverein-nv' ),
 		'id'            => 'page-sidebar',
-		'description'   => __( 'Wird nur auf Seiten angezeigt, bei denen im Seiten-Editor die Sidebar aktiviert wurde.', 'ortsverein-nv' ),
+		'description'   => __( 'Widgets für Seiten. Im Seiten-Editor wählt jede Seite einzeln aus, welche dieser Widgets dort erscheinen.', 'ortsverein-nv' ),
 		'before_widget' => '<div id="%1$s" class="widget %2$s">',
 		'after_widget'  => '</div>',
 		'before_title'  => '<h3 class="widget-title">',

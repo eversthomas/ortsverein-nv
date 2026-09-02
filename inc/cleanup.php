@@ -21,6 +21,12 @@ function ortsverein_nv_disable_gutenberg() {
 add_action( 'init', 'ortsverein_nv_disable_gutenberg', 9 );
 
 /**
+ * Klassische Widgets-Verwaltung erzwingen (kein Block-Widget-Editor).
+ * Sorgt für verlässliche Widget-Titel und passt zum restlichen Classic-Editor-Ansatz.
+ */
+add_filter( 'use_widgets_block_editor', '__return_false' );
+
+/**
  * Classic Editor erzwingen (falls Plugin aktiv).
  */
 add_filter( 'classic_editor_enabled', '__return_true' );
