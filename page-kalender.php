@@ -59,13 +59,17 @@ get_header();
 <main id="main">
 	<?php while ( have_posts() ) : the_post(); ?>
 		<?php get_template_part( 'template-parts/hero-subpage' ); ?>
-		<section class="section-padding bg-grau" aria-labelledby="kalender-h2">
+		<section class="section-padding kalender-section bg-grau" aria-labelledby="kalender-h2">
 			<div class="container">
-				<div class="section-label"><?php esc_html_e( 'Veranstaltungskalender', 'ortsverein-nv' ); ?></div>
 				<h2 id="kalender-h2" class="screen-reader-text"><?php esc_html_e( 'Kalender', 'ortsverein-nv' ); ?></h2>
-				<p class="kalender-intro"><?php esc_html_e( 'Alle Termine des Ortsvereins auf einen Blick. Tage mit Veranstaltungen sind markiert.', 'ortsverein-nv' ); ?></p>
 
-				<?php if ( trim( wp_strip_all_tags( get_the_content() ) ) !== '' ) : ?>
+				<?php
+				// html_entity_decode() sorgt dafür, dass ein vom Classic Editor hinterlassener
+				// leerer Absatz wie "<p>&nbsp;</p>" ebenfalls als leer erkannt wird (nach
+				// strip_tags bliebe sonst der reine Text "&nbsp;" übrig, den trim() nicht entfernt).
+				$kalender_content_text = trim( str_replace( "\xc2\xa0", '', wp_strip_all_tags( html_entity_decode( get_the_content(), ENT_QUOTES, 'UTF-8' ) ) ) );
+				if ( '' !== $kalender_content_text ) :
+					?>
 					<div class="entry-content kalender-entry-content">
 						<?php the_content(); ?>
 					</div>
