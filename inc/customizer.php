@@ -192,6 +192,41 @@ function ortsverein_nv_customize_register( WP_Customize_Manager $wp_customize ) 
 		'section'     => 'ortsverein_nv_kalender',
 		'type'        => 'url',
 	) );
+
+	// --- Plugin-Kalender "Bezugssysteme ICS Feed" (nur sichtbar, wenn Plugin aktiv) ---
+	if ( ortsverein_nv_bs_ics_plugin_active() ) {
+		$bs_ics_locations = array(
+			'home' => __( 'Startseite', 'ortsverein-nv' ),
+			'page' => __( 'Kalenderseite', 'ortsverein-nv' ),
+		);
+
+		foreach ( $bs_ics_locations as $loc_key => $loc_label ) {
+			$wp_customize->add_setting( 'ortsverein_nv_kalender_' . $loc_key . '_use_plugin', array(
+				'default'           => false,
+				'sanitize_callback' => 'ortsverein_nv_sanitize_checkbox',
+				'validate_callback' => 'ortsverein_nv_validate_kalender_plugin_toggle',
+			) );
+			$wp_customize->add_control( 'ortsverein_nv_kalender_' . $loc_key . '_use_plugin', array(
+				/* translators: %s: Startseite oder Kalenderseite. */
+				'label'       => sprintf( __( '%s: Plugin-Kalender statt eigenem ICS-Kalender verwenden', 'ortsverein-nv' ), $loc_label ),
+				'description' => __( 'Ersetzt die dortige Kalenderansicht vollständig durch den unten eingetragenen Shortcode des Plugins "Bezugssysteme ICS Feed".', 'ortsverein-nv' ),
+				'section'     => 'ortsverein_nv_kalender',
+				'type'        => 'checkbox',
+			) );
+
+			$wp_customize->add_setting( 'ortsverein_nv_kalender_' . $loc_key . '_shortcode', array(
+				'default'           => '',
+				'sanitize_callback' => 'sanitize_text_field',
+			) );
+			$wp_customize->add_control( 'ortsverein_nv_kalender_' . $loc_key . '_shortcode', array(
+				/* translators: %s: Startseite oder Kalenderseite. */
+				'label'       => sprintf( __( '%s: Shortcode aus dem Plugin', 'ortsverein-nv' ), $loc_label ),
+				'description' => __( 'Im Plugin-Backend unter "ICS Feeds" den gewünschten Feed öffnen und den dort angezeigten Shortcode (z. B. [bs_ics_calendar id="12"]) hier einfügen. Wird nur verwendet, wenn der Schalter oben aktiviert ist.', 'ortsverein-nv' ),
+				'section'     => 'ortsverein_nv_kalender',
+				'type'        => 'text',
+			) );
+		}
+	}
 }
 
 add_action( 'customize_register', 'ortsverein_nv_customize_register' );
@@ -205,6 +240,54 @@ function ortsverein_nv_customize_save_ics() {
 	}
 }
 add_action( 'customize_save_after', 'ortsverein_nv_customize_save_ics' );
+
+/**
+ * Sanitize-Callback für Checkbox-Einstellungen (true/false).
+ *
+ * @param mixed $value Roher Customizer-Wert.
+ * @return bool
+ */
+function ortsverein_nv_sanitize_checkbox( $value ) {
+	return ( isset( $value ) && true == $value ); // phpcs:ignore Universal.Operators.StrictComparisons -- Checkbox liefert '1'/true.
+}
+
+/**
+ * Verhindert das Aktivieren eines Plugin-Kalender-Schalters ohne gültigen Shortcode.
+ *
+ * Prüft sowohl den in diesem Speicherlauf mitgesendeten (noch ungesicherten) Shortcode-Wert
+ * als auch – falls im selben Request nicht mitgesendet – den bereits gespeicherten Theme-Mod.
+ *
+ * @param WP_Error              $validity Validierungsobjekt.
+ * @param mixed                 $value    Roher Checkbox-Wert.
+ * @param WP_Customize_Setting  $setting  Die Checkbox-Einstellung.
+ * @return WP_Error
+ */
+function ortsverein_nv_validate_kalender_plugin_toggle( $validity, $value, $setting ) {
+	$enabled = ( isset( $value ) && true == $value ); // phpcs:ignore Universal.Operators.StrictComparisons -- Checkbox liefert '1'/true.
+	if ( ! $enabled ) {
+		return $validity;
+	}
+
+	if ( ! ortsverein_nv_bs_ics_plugin_active() ) {
+		$validity->add( 'bs_ics_inactive', __( 'Das Plugin „Bezugssysteme ICS Feed" ist nicht aktiv.', 'ortsverein-nv' ) );
+		return $validity;
+	}
+
+	$shortcode_setting_id = str_replace( '_use_plugin', '_shortcode', $setting->id );
+	$posted_values        = $setting->manager->unsanitized_post_values();
+	$shortcode            = array_key_exists( $shortcode_setting_id, $posted_values )
+		? trim( (string) $posted_values[ $shortcode_setting_id ] )
+		: trim( (string) get_theme_mod( $shortcode_setting_id, '' ) );
+
+	if ( '' === $shortcode || ! has_shortcode( $shortcode, 'bs_ics_calendar' ) ) {
+		$validity->add(
+			'bs_ics_shortcode_required',
+			__( 'Bitte hole dir zuerst den Shortcode aus dem Plugin-Backend („ICS Feeds" – Feed öffnen) und trage ihn im Feld darunter ein, bevor du diese Option aktivierst.', 'ortsverein-nv' )
+		);
+	}
+
+	return $validity;
+}
 
 /**
  * Header-Logo-Höhe auf 32–140 px begrenzen.

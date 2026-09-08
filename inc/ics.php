@@ -19,6 +19,39 @@ define( 'ORTSVEREIN_NV_ICS_TRANSIENT', 'ortsverein_nv_ics_events' );
 define( 'ORTSVEREIN_NV_ICS_CACHE_SECONDS', 30 * 60 );
 
 /**
+ * Prüft, ob das Plugin „Bezugssysteme ICS Feed" installiert und aktiv ist.
+ *
+ * @return bool
+ */
+function ortsverein_nv_bs_ics_plugin_active() {
+	return class_exists( 'BS_ICS_Feed_Reader' );
+}
+
+/**
+ * Liefert den im Customizer hinterlegten Plugin-Shortcode für eine Kalender-Position,
+ * sofern das Plugin aktiv, der Schalter aktiviert und ein gültiger Shortcode hinterlegt ist.
+ *
+ * Fällt automatisch auf false (= eigener ICS-Kalender) zurück, sobald das Plugin
+ * deaktiviert oder deinstalliert wird – unabhängig vom gespeicherten Schalter-Zustand.
+ *
+ * @param string $location 'home' (Startseite) oder 'page' (Kalenderseite).
+ * @return string|false Shortcode-String oder false.
+ */
+function ortsverein_nv_kalender_plugin_shortcode( $location ) {
+	if ( ! ortsverein_nv_bs_ics_plugin_active() ) {
+		return false;
+	}
+	if ( ! get_theme_mod( 'ortsverein_nv_kalender_' . $location . '_use_plugin', false ) ) {
+		return false;
+	}
+	$shortcode = trim( (string) get_theme_mod( 'ortsverein_nv_kalender_' . $location . '_shortcode', '' ) );
+	if ( '' === $shortcode || ! has_shortcode( $shortcode, 'bs_ics_calendar' ) ) {
+		return false;
+	}
+	return $shortcode;
+}
+
+/**
  * Holt alle Termine aus dem ICS-Feed (gecacht).
  *
  * @return array Liste von Termin-Arrays: start (DateTime), end (DateTime), title, description, location.
@@ -266,6 +299,79 @@ function ortsverein_nv_get_weekday_names() {
 		6 => __( 'Samstag', 'ortsverein-nv' ),
 		7 => __( 'Sonntag', 'ortsverein-nv' ),
 	);
+}
+
+/**
+ * Ostersonntag (Gregorianischer Kalender) nach der Gaußschen Osterformel.
+ *
+ * @param int $year Jahr.
+ * @return DateTime
+ */
+function ortsverein_nv_ostersonntag( $year ) {
+	$a = $year % 19;
+	$b = intdiv( $year, 100 );
+	$c = $year % 100;
+	$d = intdiv( $b, 4 );
+	$e = $b % 4;
+	$f = intdiv( $b + 8, 25 );
+	$g = intdiv( $b - $f + 1, 3 );
+	$h = ( 19 * $a + $b - $d - $g + 15 ) % 30;
+	$i = intdiv( $c, 4 );
+	$k = $c % 4;
+	$l = ( 32 + 2 * $e + 2 * $i - $h - $k ) % 7;
+	$m = intdiv( $a + 11 * $h + 22 * $l, 451 );
+	$monat = intdiv( $h + $l - 7 * $m + 114, 31 );
+	$tag = ( ( $h + $l - 7 * $m + 114 ) % 31 ) + 1;
+	return new DateTime( sprintf( '%04d-%02d-%02d', $year, $monat, $tag ) );
+}
+
+/**
+ * Gesetzliche Feiertage in Nordrhein-Westfalen für ein Jahr.
+ *
+ * @param int $year Jahr.
+ * @return array Assoziativ: 'Y-m-d' => Name des Feiertags.
+ */
+function ortsverein_nv_get_feiertage( $year ) {
+	static $cache = array();
+	if ( isset( $cache[ $year ] ) ) {
+		return $cache[ $year ];
+	}
+
+	$ostersonntag = ortsverein_nv_ostersonntag( $year );
+	$feiertage = array();
+
+	$add = function ( DateTime $dt, $name ) use ( &$feiertage ) {
+		$feiertage[ $dt->format( 'Y-m-d' ) ] = $name;
+	};
+
+	$add( new DateTime( "$year-01-01" ), __( 'Neujahr', 'ortsverein-nv' ) );
+	$add( ( clone $ostersonntag )->modify( '-2 days' ), __( 'Karfreitag', 'ortsverein-nv' ) );
+	$add( ( clone $ostersonntag )->modify( '+1 day' ), __( 'Ostermontag', 'ortsverein-nv' ) );
+	$add( new DateTime( "$year-05-01" ), __( 'Tag der Arbeit', 'ortsverein-nv' ) );
+	$add( ( clone $ostersonntag )->modify( '+39 days' ), __( 'Christi Himmelfahrt', 'ortsverein-nv' ) );
+	$add( ( clone $ostersonntag )->modify( '+50 days' ), __( 'Pfingstmontag', 'ortsverein-nv' ) );
+	$add( ( clone $ostersonntag )->modify( '+60 days' ), __( 'Fronleichnam', 'ortsverein-nv' ) );
+	$add( new DateTime( "$year-10-03" ), __( 'Tag der Deutschen Einheit', 'ortsverein-nv' ) );
+	$add( new DateTime( "$year-11-01" ), __( 'Allerheiligen', 'ortsverein-nv' ) );
+	$add( new DateTime( "$year-12-25" ), __( '1. Weihnachtstag', 'ortsverein-nv' ) );
+	$add( new DateTime( "$year-12-26" ), __( '2. Weihnachtstag', 'ortsverein-nv' ) );
+
+	$cache[ $year ] = $feiertage;
+	return $feiertage;
+}
+
+/**
+ * Name des gesetzlichen Feiertags für ein Datum (NRW), falls vorhanden.
+ *
+ * @param int $year  Jahr.
+ * @param int $month Monat 1–12.
+ * @param int $day   Tag.
+ * @return string|null
+ */
+function ortsverein_nv_get_feiertag_name( $year, $month, $day ) {
+	$feiertage = ortsverein_nv_get_feiertage( $year );
+	$key = sprintf( '%04d-%02d-%02d', $year, $month, $day );
+	return isset( $feiertage[ $key ] ) ? $feiertage[ $key ] : null;
 }
 
 /**

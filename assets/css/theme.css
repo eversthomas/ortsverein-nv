@@ -709,6 +709,8 @@ section.bg-rot-hell { background: var(--rot-hell); }
   gap: var(--abstand-l);
   align-items: start;
 }
+/* Plugin-Kalender-Embed hat kein zweispaltiges Innenlayout wie das Theme-eigene Grid+Terminliste. */
+.kalender-layout.kalender-plugin-embed { grid-template-columns: 1fr; }
 .kalender-box {
   background: var(--weiss);
   border-radius: var(--radius-m);
@@ -751,7 +753,24 @@ section.bg-rot-hell { background: var(--rot-hell); }
 .kalender-legend-item { display: flex; align-items: center; gap: 6px; }
 .kalender-legend-dot { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
 .kalender-legend-today { background: var(--rot); }
-.kalender-legend-event { background: var(--rot-hell); border: 1px solid rgba(226,0,26,0.2); }
+.kalender-legend-event {
+  position: relative;
+  background: transparent;
+  border: 1px solid var(--grau-rand);
+}
+.kalender-legend-event::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rot);
+  transform: translate(-50%, -50%);
+}
+.kalender-legend-weekend { background: var(--grau-hell); border: 1px solid var(--grau-rand); }
+.kalender-legend-holiday { background: rgba(236,116,5,0.14); border: 1px solid rgba(236,116,5,0.3); }
 .kalender-termine-title { font-size: 1.1rem; margin-bottom: 16px; }
 .kalender-keine-termine { color: var(--grau-mittel); font-size: 0.9rem; }
 
@@ -819,13 +838,10 @@ section.bg-rot-hell { background: var(--rot-hell); }
   position: relative;
 }
 .kal-day.empty { opacity: 0; pointer-events: none; }
+.kal-day.weekend { background: var(--grau-hell); color: var(--grau-dunkel); }
+.kal-day.holiday { background: rgba(236,116,5,0.14); color: var(--orange); font-weight: 700; }
 .kal-day.today { background: var(--rot); color: #fff; font-weight: 800; }
-.kal-day.has-event {
-  background: var(--rot-hell);
-  color: var(--rot);
-  font-weight: 700;
-  cursor: pointer;
-}
+.kal-day.has-event { cursor: pointer; }
 .kal-day.has-event::after {
   content: '';
   position: absolute;
@@ -837,7 +853,7 @@ section.bg-rot-hell { background: var(--rot-hell); }
 }
 .kal-day.has-event.today::after { background: #fff; }
 .kal-day:hover:not(.empty):not(.today) { background: var(--grau-hell); }
-.kal-day.has-event:hover { background: rgba(226,0,26,0.15); }
+.kal-day.has-event:hover:not(.today) { background: rgba(226,0,26,0.15); }
 
 /* ===== FOOTER ===== */
 #site-footer {

@@ -30,15 +30,33 @@ $wochentage_kurz = array( __( 'Mo', 'ortsverein-nv' ), __( 'Di', 'ortsverein-nv'
 	<?php for ( $tag = 1; $tag <= $args['tage_im_monat']; $tag++ ) :
 		$ist_heute = ( $args['heute_tag'] === $tag );
 		$hat_event = ! empty( $args['event_tage'][ $tag ] );
+		$wochentag_index = ( $args['start_offset'] + $tag - 1 ) % 7; // 0=Mo .. 6=So
+		$ist_wochenende = ( $wochentag_index === 5 || $wochentag_index === 6 );
+		$feiertag_name = ortsverein_nv_get_feiertag_name( $args['kal_year'], $args['kal_month_num'], $tag );
+
 		$cls = 'kal-day';
+		if ( $ist_wochenende ) {
+			$cls .= ' weekend';
+		}
+		if ( $feiertag_name ) {
+			$cls .= ' holiday';
+		}
 		if ( $ist_heute ) {
 			$cls .= ' today';
 		}
 		if ( $hat_event ) {
 			$cls .= ' has-event';
 		}
+
 		$datum_attr = $hat_event ? sprintf( '%04d-%02d-%02d', $args['kal_year'], $args['kal_month_num'], $tag ) : '';
-		$label = $tag . '. ' . $args['monat_name'] . ( $hat_event ? ' – ' . __( 'Termin vorhanden', 'ortsverein-nv' ) : '' ) . ( $ist_heute ? ' (' . __( 'heute', 'ortsverein-nv' ) . ')' : '' );
+		$label_teile = array();
+		if ( $feiertag_name ) {
+			$label_teile[] = $feiertag_name;
+		}
+		if ( $hat_event ) {
+			$label_teile[] = __( 'Termin vorhanden', 'ortsverein-nv' );
+		}
+		$label = $tag . '. ' . $args['monat_name'] . ( $label_teile ? ' – ' . implode( ', ', $label_teile ) : '' ) . ( $ist_heute ? ' (' . __( 'heute', 'ortsverein-nv' ) . ')' : '' );
 		?>
 		<div class="<?php echo esc_attr( $cls ); ?>" aria-label="<?php echo esc_attr( $label ); ?>" <?php echo $hat_event ? ' data-date="' . esc_attr( $datum_attr ) . '" tabindex="0"' : ''; ?>><?php echo esc_html( (string) $tag ); ?></div>
 	<?php endfor; ?>
