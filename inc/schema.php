@@ -37,6 +37,8 @@ function ortsverein_nv_output_schema_jsonld() {
 		$org_city    = ortsverein_nv_get_option( 'org_city', 'Neukirchen-Vluyn' );
 		$org_country = ortsverein_nv_get_option( 'org_country', 'DE' );
 		$same_awokv  = ortsverein_nv_get_option( 'social_awokv', 'https://www.awo-kv-wesel.de/ueber-die-awo/awo-vor-ort/ortsvereine-und-awo-treffs/ortsverein-neukirchen-vluyn/' );
+		$same_fb     = ortsverein_nv_get_option( 'social_facebook', '' );
+		$same_ig     = ortsverein_nv_get_option( 'social_instagram', '' );
 	} else {
 		$org_name    = 'AWO Ortsverein Neukirchen-Vluyn';
 		$org_street  = 'Max-von-Schenkendorf-Straße 9';
@@ -44,6 +46,16 @@ function ortsverein_nv_output_schema_jsonld() {
 		$org_city    = 'Neukirchen-Vluyn';
 		$org_country = 'DE';
 		$same_awokv  = 'https://www.awo-kv-wesel.de/ueber-die-awo/awo-vor-ort/ortsvereine-und-awo-treffs/ortsverein-neukirchen-vluyn/';
+		$same_fb     = '';
+		$same_ig     = '';
+	}
+
+	$same_as = array();
+	foreach ( array( $same_awokv, $same_fb, $same_ig ) as $same_url ) {
+		$same_url = is_string( $same_url ) ? trim( $same_url ) : '';
+		if ( '' !== $same_url ) {
+			$same_as[] = $same_url;
+		}
 	}
 
 	// Organisation (Ortsverein).
@@ -63,7 +75,7 @@ function ortsverein_nv_output_schema_jsonld() {
 			'@type' => 'City',
 			'name'  => $org_city,
 		),
-		'sameAs'          => $same_awokv ? array( $same_awokv ) : array(),
+		'sameAs'          => $same_as,
 	);
 
 	// Website.

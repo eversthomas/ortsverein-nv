@@ -21,3 +21,6 @@ node_modules/
 
 # Statische HTML-Vorlage nur lokal als Referenz, nicht im Theme-Repo
 html-vorlage/
+
+# Live-Dump zum Abgleich, nicht ins Theme-Repo
+Version/

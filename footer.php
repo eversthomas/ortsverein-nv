@@ -38,6 +38,9 @@ $ortsverein_nv_has_contact = ( '' !== $ortsverein_nv_email || '' !== $ortsverein
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
+		<?php if ( function_exists( 'ortsverein_nv_render_social_links' ) ) : ?>
+			<?php ortsverein_nv_render_social_links( 'footer' ); ?>
+		<?php endif; ?>
 		<?php if ( has_nav_menu( 'footer' ) ) : ?>
 			<div class="footer-links">
 				<?php

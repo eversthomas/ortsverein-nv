@@ -109,3 +109,85 @@ function ortsverein_nv_get_phone_tel_href( $phone ) {
 	$href = preg_replace( '/[^\d+]/', '', $phone );
 	return is_string( $href ) ? $href : '';
 }
+
+/**
+ * Gepflegte Social-Media-Links (nur Netzwerke mit gesetzter URL).
+ *
+ * @return array[] Liste mit keys network, label, url.
+ */
+function ortsverein_nv_get_social_links() {
+	if ( ! function_exists( 'ortsverein_nv_get_option' ) ) {
+		return array();
+	}
+
+	$networks = array(
+		'facebook'  => __( 'Facebook', 'ortsverein-nv' ),
+		'instagram' => __( 'Instagram', 'ortsverein-nv' ),
+	);
+
+	$links = array();
+	foreach ( $networks as $network => $label ) {
+		$url = trim( (string) ortsverein_nv_get_option( 'social_' . $network, '' ) );
+		if ( '' === $url ) {
+			continue;
+		}
+		$links[] = array(
+			'network' => $network,
+			'label'   => $label,
+			'url'     => $url,
+		);
+	}
+
+	return $links;
+}
+
+/**
+ * SVG-Icon für ein Social-Netzwerk (dekorativ, aria-hidden).
+ *
+ * @param string $network facebook|instagram.
+ * @return string
+ */
+function ortsverein_nv_get_social_icon_svg( $network ) {
+	if ( 'facebook' === $network ) {
+		return '<svg class="social-link-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12.07C22 6.48 17.52 2 11.93 2S1.86 6.48 1.86 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.9v-2.9h2.4V9.84c0-2.38 1.42-3.69 3.6-3.69 1.04 0 2.13.18 2.13.18v2.35h-1.2c-1.18 0-1.55.73-1.55 1.48v1.78h2.64l-.42 2.9h-2.22V22c4.78-.75 8.44-4.91 8.44-9.93z"/></svg>';
+	}
+
+	if ( 'instagram' === $network ) {
+		return '<svg class="social-link-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><rect x="3.25" y="3.25" width="17.5" height="17.5" rx="5" stroke="currentColor" stroke-width="1.75"/><circle cx="12" cy="12" r="4.15" stroke="currentColor" stroke-width="1.75"/><circle cx="17.35" cy="6.65" r="1.15" fill="currentColor"/></svg>';
+	}
+
+	return '';
+}
+
+/**
+ * Gibt die Social-Icons als Navigation aus (Footer oder Widget).
+ *
+ * @param string $context footer|widget.
+ */
+function ortsverein_nv_render_social_links( $context = 'footer' ) {
+	$links = ortsverein_nv_get_social_links();
+	if ( empty( $links ) ) {
+		return;
+	}
+
+	$context = in_array( $context, array( 'footer', 'widget' ), true ) ? $context : 'footer';
+	?>
+	<nav class="social-links social-links--<?php echo esc_attr( $context ); ?>" aria-label="<?php esc_attr_e( 'Soziale Netzwerke', 'ortsverein-nv' ); ?>">
+		<ul class="social-links-list">
+			<?php foreach ( $links as $link ) : ?>
+				<li>
+					<a
+						href="<?php echo esc_url( $link['url'] ); ?>"
+						class="social-link social-link--<?php echo esc_attr( $link['network'] ); ?>"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="<?php echo esc_attr( sprintf( __( '%s (öffnet in neuem Tab)', 'ortsverein-nv' ), $link['label'] ) ); ?>"
+					>
+						<?php echo ortsverein_nv_get_social_icon_svg( $link['network'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- festes SVG. ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</nav>
+	<?php
+}

@@ -22,6 +22,8 @@ require_once $ortsverein_nv_inc . 'template-functions.php';
 require_once $ortsverein_nv_inc . 'install.php';
 // Meta-Boxen (Seiten-Sidebar ein/aus).
 require_once $ortsverein_nv_inc . 'meta-boxes.php';
+// Theme-Widgets (Social-Media-Links).
+require_once $ortsverein_nv_inc . 'widgets.php';
 // ICS-Kalender.
 require_once $ortsverein_nv_inc . 'ics.php';
 // Customizer.

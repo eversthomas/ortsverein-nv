@@ -108,6 +108,22 @@ function ortsverein_nv_register_theme_options() {
 		'ortsverein_nv_section_contact'
 	);
 
+	add_settings_field(
+		'social_facebook',
+		__( 'Facebook', 'ortsverein-nv' ),
+		'ortsverein_nv_field_social_facebook_cb',
+		'ortsverein_nv_options',
+		'ortsverein_nv_section_contact'
+	);
+
+	add_settings_field(
+		'social_instagram',
+		__( 'Instagram', 'ortsverein-nv' ),
+		'ortsverein_nv_field_social_instagram_cb',
+		'ortsverein_nv_options',
+		'ortsverein_nv_section_contact'
+	);
+
 	// Sektion: Zentrale Seiten.
 	add_settings_section(
 		'ortsverein_nv_section_pages',
@@ -208,8 +224,10 @@ function ortsverein_nv_sanitize_theme_options( $input ) {
 	// Kontakt & Social.
 	$output['contact_email']   = isset( $input['contact_email'] ) ? sanitize_email( $input['contact_email'] ) : '';
 	$output['contact_phone']   = isset( $input['contact_phone'] ) ? sanitize_text_field( $input['contact_phone'] ) : '';
-	$output['social_website']  = isset( $input['social_website'] ) ? esc_url_raw( $input['social_website'] ) : '';
-	$output['social_awokv']    = isset( $input['social_awokv'] ) ? esc_url_raw( $input['social_awokv'] ) : '';
+	$output['social_website']    = isset( $input['social_website'] ) ? esc_url_raw( $input['social_website'] ) : '';
+	$output['social_awokv']      = isset( $input['social_awokv'] ) ? esc_url_raw( $input['social_awokv'] ) : '';
+	$output['social_facebook']   = isset( $input['social_facebook'] ) ? esc_url_raw( $input['social_facebook'] ) : '';
+	$output['social_instagram']  = isset( $input['social_instagram'] ) ? esc_url_raw( $input['social_instagram'] ) : '';
 
 	// Zentrale Seiten (Page-IDs).
 	$page_keys = array(
@@ -258,7 +276,7 @@ function ortsverein_nv_section_org_cb() {
  * Callback: Beschreibung Sektion Kontakt.
  */
 function ortsverein_nv_section_contact_cb() {
-	echo '<p>' . esc_html__( 'Basis-Kontaktdaten und Links. Diese helfen Besucherinnen und Besuchern, euch schnell zu erreichen.', 'ortsverein-nv' ) . '</p>';
+	echo '<p>' . esc_html__( 'Basis-Kontaktdaten und Links. Facebook- und Instagram-Links erscheinen im Footer und können zusätzlich per Widget auf einzelnen Seiten gezeigt werden.', 'ortsverein-nv' ) . '</p>';
 }
 
 /**
@@ -376,6 +394,28 @@ function ortsverein_nv_field_social_awokv_cb() {
 	?>
 	<input type="url" class="regular-text" name="ortsverein_nv_options[social_awokv]" value="<?php echo esc_attr( $value ); ?>">
 	<p class="description"><?php esc_html_e( 'Link zur übergeordneten AWO-Struktur (Kreisverband, Bezirksverband o. ä.).', 'ortsverein-nv' ); ?></p>
+	<?php
+}
+
+/**
+ * Feld: Facebook-Profil.
+ */
+function ortsverein_nv_field_social_facebook_cb() {
+	$value = ortsverein_nv_get_option( 'social_facebook', '' );
+	?>
+	<input type="url" class="regular-text" name="ortsverein_nv_options[social_facebook]" value="<?php echo esc_attr( $value ); ?>" placeholder="https://www.facebook.com/…">
+	<p class="description"><?php esc_html_e( 'Vollständige Adresse der Facebook-Seite. Leer lassen, wenn kein Facebook-Auftritt gezeigt werden soll. Das Icon ist vorgegeben.', 'ortsverein-nv' ); ?></p>
+	<?php
+}
+
+/**
+ * Feld: Instagram-Profil.
+ */
+function ortsverein_nv_field_social_instagram_cb() {
+	$value = ortsverein_nv_get_option( 'social_instagram', '' );
+	?>
+	<input type="url" class="regular-text" name="ortsverein_nv_options[social_instagram]" value="<?php echo esc_attr( $value ); ?>" placeholder="https://www.instagram.com/…">
+	<p class="description"><?php esc_html_e( 'Vollständige Adresse des Instagram-Profils. Leer lassen, wenn kein Instagram-Auftritt gezeigt werden soll. Das Icon ist vorgegeben.', 'ortsverein-nv' ); ?></p>
 	<?php
 }
 
